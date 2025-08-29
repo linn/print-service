@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<AssemblyName>Linn.PrintService.Service</AssemblyName>
+		<RootNamespace>Linn.PrintService.Service</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="ResultHandlers\**" />
+	  <EmbeddedResource Remove="ResultHandlers\**" />
+	  <None Remove="ResultHandlers\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
+		<PackageReference Include="Linn.Common.Service.Core" Version="1.0.0" />
+	</ItemGroup>
+
+</Project>

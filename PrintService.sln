@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "src\Service\Service.csproj", "{D296DBA5-15C0-442D-8F96-71D070D674E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CD5BBF56-D6D3-4BCB-8CA0-E00CE1368E34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.Host", "src\Service.Host\Service.Host.csproj", "{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{B31DDE0C-67E3-4D19-B524-039D7AD3A00C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{19C8CAF7-D5D1-44CB-BE5F-23D416B667CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3009A116-E434-4816-A0F4-570C303DA933}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aws", "aws", "{C64C5349-A32E-4A08-AF21-0C4C5694A3B4}"
+	ProjectSection(SolutionItems) = preProject
+		aws\application.yml = aws\application.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{95A19A4F-379D-4A10-B22E-B31F0B1AEB17}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\deploy.sh = scripts\deploy.sh
+		scripts\install.sh = scripts\install.sh
+		scripts\package.sh = scripts\package.sh
+		scripts\test.sh = scripts\test.sh
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration.Tests", "tests\Integration\Integration.Tests\Integration.Tests.csproj", "{831DA56D-0DFA-4A9F-AF1C-9E17834E4690}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D296DBA5-15C0-442D-8F96-71D070D674E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D296DBA5-15C0-442D-8F96-71D070D674E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D296DBA5-15C0-442D-8F96-71D070D674E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D296DBA5-15C0-442D-8F96-71D070D674E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{831DA56D-0DFA-4A9F-AF1C-9E17834E4690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{831DA56D-0DFA-4A9F-AF1C-9E17834E4690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{831DA56D-0DFA-4A9F-AF1C-9E17834E4690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{831DA56D-0DFA-4A9F-AF1C-9E17834E4690}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B31DDE0C-67E3-4D19-B524-039D7AD3A00C} = {CD5BBF56-D6D3-4BCB-8CA0-E00CE1368E34}
+		{19C8CAF7-D5D1-44CB-BE5F-23D416B667CA} = {CD5BBF56-D6D3-4BCB-8CA0-E00CE1368E34}
+		{C64C5349-A32E-4A08-AF21-0C4C5694A3B4} = {3009A116-E434-4816-A0F4-570C303DA933}
+		{95A19A4F-379D-4A10-B22E-B31F0B1AEB17} = {3009A116-E434-4816-A0F4-570C303DA933}
+		{831DA56D-0DFA-4A9F-AF1C-9E17834E4690} = {B31DDE0C-67E3-4D19-B524-039D7AD3A00C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A61BEBB2-67FD-4B79-8ED3-83FCB7F5E5E4}
+	EndGlobalSection
+EndGlobal
