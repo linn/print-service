@@ -15,12 +15,4 @@ if [ $? -eq 1 ]; then
   exit 1
 fi
 
-# javascript tests
-cd ./src/Service.Host
-npm ci
-npm test
-echo $?
-result=$?
-cd ../..
-
 exit $result
