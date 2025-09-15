@@ -1,23 +1,17 @@
 namespace Linn.PrintService.Service.Host
 {
-    using System.IO;
-
     using Linn.Common.Logging;
     using Linn.Common.Service.Core;
     using Linn.Common.Service.Core.Extensions;
     using Linn.PrintService.Service.Host.Negotiators;
     using Linn.PrintService.Service.Models;
 
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.FileProviders;
-    using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.JsonWebTokens;
-    using Microsoft.IdentityModel.Tokens;
 
     public class Startup
     {
