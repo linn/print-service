@@ -29,38 +29,12 @@ namespace Linn.PrintService.Service.Host
             services.AddSingleton<IViewLoader, ViewLoader>();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
-            var appSettings = ApplicationSettings.Get();
-            var authority = appSettings.AuthorityUri;
-            
-            services.AddAuthentication(options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    })
-                .AddJwtBearer(options =>
-                    {
-                        options.Authority = authority;
-
-                        options.TokenValidationParameters = new TokenValidationParameters
-                                                                {
-                                                                    ValidateIssuer = true,
-                                                                    ValidIssuer = authority,
-                                                                    ValidateAudience = false,
-                                                                    ValidAudience = "64fbgrkkslt1choig1e8km1g45",
-                                                                    ValidateLifetime = true,
-                                                                    ValidateIssuerSigningKey = true
-                                                                };
-                    });
-            
-            services.AddAuthorization();
+            ApplicationSettings.Get();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
-            app.UseAuthentication();
-            
 
             app.Use(async (context, next) =>
             {
@@ -79,7 +53,6 @@ namespace Linn.PrintService.Service.Host
             }));
 
             app.UseRouting();
-            app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>
             {
