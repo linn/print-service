@@ -165,10 +165,10 @@ namespace Linn.PrintService.Service.Modules
             Console.WriteLine($"User: {Username}");
             Console.WriteLine($"Job Name: {resource.JobName}");
 
-            if (resource.Data == null || resource.Data.Length == 0)
+            if (resource.Data.Length == 0)
             {
                 res.StatusCode = 400;
-                await res.WriteAsync("Error: Missing or empty data.");
+                await res.WriteAsync("Error: Empty data.");
                 return;
             }
 
