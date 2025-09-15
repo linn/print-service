@@ -6,9 +6,11 @@ namespace Linn.PrintService.Service.Modules
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
-    
+
     using Linn.Common.Configuration;
     using Linn.Common.Service.Core;
+
+    using Linn.PrintService.Resources.RequestResources;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
@@ -52,8 +54,7 @@ namespace Linn.PrintService.Service.Modules
                 attrs = AddAttr(attrs, 0x48, "attributes-natural-language", "en");
                 attrs = AddAttr(attrs, 0x45, "printer-uri", printerUri);
 
-                // This username part is optional. The actual authenticated user identity is determined
-                // by the HTTP authentication layer. We still include it here for tracking/logging.
+                // Include username for tracking/logging. Optional part.
                 attrs = AddAttr(attrs, 0x42, "requesting-user-name", user);
                 attrs = AddAttr(attrs, 0x42, "job-name", jobName);
 
@@ -158,44 +159,37 @@ namespace Linn.PrintService.Service.Modules
             }
         }
 
-        private async Task Print(HttpRequest req, HttpResponse res)
+        private async Task Print(HttpRequest req, HttpResponse res, PrintJobRequestResource resource)
         {
-            // Read values from query string
-            string printerUri = req.Query["printerUri"].ToString();
-            string filePath = req.Query["filePath"].ToString();
-            string jobName = req.Query["jobName"].ToString();
-
-            Console.WriteLine($"Printer URI: {printerUri}");
+            Console.WriteLine($"Printer URI: {resource.PrinterUri}");
             Console.WriteLine($"User: {Username}");
-            Console.WriteLine($"Job Name: {jobName}");
-            Console.WriteLine($"File to print: {filePath}");
+            Console.WriteLine($"Job Name: {resource.JobName}");
 
-            if (!File.Exists(filePath))
+            if (resource.Data == null || resource.Data.Length == 0)
             {
                 res.StatusCode = 400;
-                await res.WriteAsync("Error: File not found.");
+                await res.WriteAsync("Error: Missing or empty data.");
                 return;
             }
 
-            // Read PDF file into byte array
-            byte[] documentBytes = File.ReadAllBytes(filePath);
+            byte[] documentBytes = resource.Data;
 
             // Build IPP payload
-            byte[] ippPayload = BuildPayload(printerUri, Username, jobName, documentBytes);
+            byte[] ippPayload = BuildPayload(resource.PrinterUri, Username, resource.JobName ?? "PrintJob", documentBytes);
 
             // Debug purposes
             Console.WriteLine("IPP 1.0 Print-Job (hex preview):");
             Console.WriteLine(HexPreview(ippPayload));
 
             // Send print job (with hardcoded credentials)
-            var response = await SendPrintJob(printerUri, ippPayload, Username, Password);
+            var response = await SendPrintJob(resource.PrinterUri, ippPayload, Username, Password);
 
             res.ContentType = "application/json";
             await res.WriteAsJsonAsync(new
             {
                 success = response.success,
-                printer = printerUri,
-                job = jobName,
+                printer = resource.PrinterUri,
+                job = resource.JobName,
                 httpStatus = response.statusCode,
                 responsePreview = response.preview
             });
