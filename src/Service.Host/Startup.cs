@@ -1,5 +1,5 @@
 namespace Linn.PrintService.Service.Host
-{ 
+{
     using Linn.Common.Logging;
     using Linn.Common.Service.Core;
     using Linn.Common.Service.Core.Extensions;
