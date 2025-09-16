@@ -22,7 +22,11 @@ namespace Linn.PrintService.Service.Host
             services.AddCors();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
+            services.AddSqsExtensions();
+            services.AddLog();
+
             services.AddServices();
+            services.AddAuthorization();
 
             ApplicationSettings.Get();
         }
@@ -40,8 +44,8 @@ namespace Linn.PrintService.Service.Host
             app.UseExceptionHandler(c => c.Run(async context =>
             {
                 var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
-                //var log = app.ApplicationServices.GetService<ILog>();
-                //log.Error(exception?.Message, exception);
+                var log = app.ApplicationServices.GetService<ILog>();
+                log.Error(exception?.Message, exception);
 
                 var response = new { error = $"{exception?.Message}  -  {exception?.StackTrace}" };
                 await context.Response.WriteAsJsonAsync(response);
