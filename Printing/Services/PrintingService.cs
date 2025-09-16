@@ -12,10 +12,10 @@ namespace Linn.PrintService.Printing.Services
         private readonly string username;
         private readonly string password;
 
-        public PrintingService()
+        public PrintingService(string userName, string password)
         {
-            this.username = ConfigurationManager.Configuration["PRINT_USERNAME"];
-            this.password = ConfigurationManager.Configuration["PRINT_PASSWORD"];
+            this.username = userName;
+            this.password = password;
         }
 
         public async Task<PrintResult> Print(PrintJobRequestResource request)
