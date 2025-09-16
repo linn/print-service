@@ -2,10 +2,7 @@ namespace Linn.PrintService.Printing.Services
 {
     using System.Net;
     using System.Text;
-
-    using Linn.Common.Configuration;
-
-    using Linn.PrintService.Resources.RequestResources;
+    using System.Threading.Tasks;
 
     public class PrintingService : IPrintingService
     {
@@ -18,15 +15,15 @@ namespace Linn.PrintService.Printing.Services
             this.password = password;
         }
 
-        public async Task<PrintResult> Print(PrintJobRequestResource request)
+        public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
-            var ippPayload = this.BuildPayload(
-                request.PrinterUri,
-                this.username,
-                request.JobName ?? "PrintJob",
-                request.Data);
+            if (string.IsNullOrWhiteSpace(jobName))
+            {
+                jobName = "PrintJob";
+            }
 
-            return await this.SendPrintJob(request.PrinterUri, ippPayload);
+            var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
+            return await this.SendPrintJob(printerUri, ippPayload);
         }
 
         private byte[] BuildPayload(string printerUri, string user, string jobName, byte[] documentBytes)
@@ -90,13 +87,13 @@ namespace Linn.PrintService.Printing.Services
                 var credentials = new NetworkCredential(this.username, this.password);
 
                 using (var handler = new HttpClientHandler
-                {
-                    Credentials = credentials,
-                    PreAuthenticate = true
-                })
+                                         {
+                                             Credentials = credentials,
+                                             PreAuthenticate = true
+                                         })
                 using (var client = new HttpClient(handler))
+                using (var content = new ByteArrayContent(ippPayload))
                 {
-                    var content = new ByteArrayContent(ippPayload);
                     content.Headers.ContentType =
                         new System.Net.Http.Headers.MediaTypeHeaderValue("application/ipp");
 
@@ -104,21 +101,21 @@ namespace Linn.PrintService.Printing.Services
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
 
                     return new PrintResult
-                    {
-                        Success = response.IsSuccessStatusCode,
-                        HttpStatus = (int)response.StatusCode,
-                        ResponsePreview = this.HexPreview(respBytes, 256)
-                    };
+                               {
+                                   Success = response.IsSuccessStatusCode,
+                                   HttpStatus = (int)response.StatusCode,
+                                   ResponsePreview = this.HexPreview(respBytes, 256)
+                               };
                 }
             }
             catch (Exception ex)
             {
                 return new PrintResult
-                {
-                    Success = false,
-                    HttpStatus = 500,
-                    ResponsePreview = ex.Message
-                };
+                           {
+                               Success = false,
+                               HttpStatus = 500,
+                               ResponsePreview = ex.Message
+                           };
             }
         }
 

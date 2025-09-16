@@ -19,7 +19,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Printing\Printing.csproj" />
-	  <ProjectReference Include="..\Resources\Resources.csproj" />
 	</ItemGroup>
 
 </Project>
