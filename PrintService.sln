@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{95A1
 		scripts\test.sh = scripts\test.sh
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{D06264E6-A166-409A-AF73-22A9036F7BB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "src\Resources\Resources.csproj", "{37ADA2E8-742A-4D10-AFA9-52783E5157BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +43,10 @@ Global
 		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E219E957-5BAC-4E1F-BB7F-4F70AB40347B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D06264E6-A166-409A-AF73-22A9036F7BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D06264E6-A166-409A-AF73-22A9036F7BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D06264E6-A166-409A-AF73-22A9036F7BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D06264E6-A166-409A-AF73-22A9036F7BB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,6 @@ namespace Linn.PrintService.Service.Host
     using Linn.Common.Logging;
     using Linn.Common.Service.Core;
     using Linn.Common.Service.Core.Extensions;
-    using Linn.PrintService.Service.Host.Negotiators;
     using Linn.PrintService.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -20,7 +19,6 @@ namespace Linn.PrintService.Service.Host
             JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
             services.AddCors();
-            services.AddSingleton<IViewLoader, ViewLoader>();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
             ApplicationSettings.Get();

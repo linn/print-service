@@ -9,7 +9,6 @@ namespace Linn.PrintService.Service.Modules
 
     using Linn.Common.Configuration;
     using Linn.Common.Service.Core;
-
     using Linn.PrintService.Resources.RequestResources;
 
     using Microsoft.AspNetCore.Builder;
@@ -25,7 +24,7 @@ namespace Linn.PrintService.Service.Modules
         public void MapEndpoints(IEndpointRouteBuilder app)
         {
             // POST endpoint to send a print job.
-            app.MapPost("/print", this.Print);
+            app.MapPost("print-service/print", this.Print);
         }
 
         /// <summary>
