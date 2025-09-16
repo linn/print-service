@@ -3,7 +3,6 @@ namespace Linn.PrintService.Service.Modules
     using System.Threading.Tasks;
 
     using Linn.Common.Service.Core;
-    using Linn.PrintService.Printing;
     using Linn.PrintService.Printing.Services;
     using Linn.PrintService.Resources.RequestResources;
 

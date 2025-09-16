@@ -23,7 +23,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\IoC\IoC.csproj" />
+		<ProjectReference Include="..\IoC\IoC.csproj" />
 		<ProjectReference Include="..\Service\Service.csproj" />
 	</ItemGroup>
 </Project>

@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Printing\Printing.csproj" />
-    <ProjectReference Include="..\src\Service\Service.csproj" />
+    <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
 </Project>
