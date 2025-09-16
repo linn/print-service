@@ -29,6 +29,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{95A1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "src\Resources\Resources.csproj", "{37ADA2E8-742A-4D10-AFA9-52783E5157BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printing", "Printing\Printing.csproj", "{73CEC8DD-E6E9-4833-82EB-2FB303CD01A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoC", "IoC\IoC.csproj", "{16FB39AB-4C80-43FE-A673-FAD2AEDFA485}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,14 @@ Global
 		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37ADA2E8-742A-4D10-AFA9-52783E5157BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73CEC8DD-E6E9-4833-82EB-2FB303CD01A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73CEC8DD-E6E9-4833-82EB-2FB303CD01A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73CEC8DD-E6E9-4833-82EB-2FB303CD01A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73CEC8DD-E6E9-4833-82EB-2FB303CD01A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16FB39AB-4C80-43FE-A673-FAD2AEDFA485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16FB39AB-4C80-43FE-A673-FAD2AEDFA485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16FB39AB-4C80-43FE-A673-FAD2AEDFA485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16FB39AB-4C80-43FE-A673-FAD2AEDFA485}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
