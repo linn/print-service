@@ -34,23 +34,24 @@ namespace Linn.PrintService.Service.Modules
                 data = ms.ToArray();
             }
 
+            PrintResult result;
+
             try
             {
-                var result = await printingService.Print(printerUri, jobName, data);
-                await res.WriteAsJsonAsync(result);
+                result = await printingService.Print(printerUri, jobName, data);
             }
             catch (IppPrintingException e)
             {
                 res.StatusCode = StatusCodes.Status400BadRequest;
                 await res.WriteAsJsonAsync(new
-                                               {
-                                                   Error = "Printing Error",
-                                                   Message = e.Message
-                                               });
-                Console.WriteLine(e);
-                return;
+                {
+                    Error = "Printing Error",
+                    Message = e.Message
+                });
+                return; 
             }
-        }
 
+            await res.WriteAsJsonAsync(result);
+        }
     }
 }
