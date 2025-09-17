@@ -34,11 +34,10 @@ namespace Linn.PrintService.Service.Modules
                 data = ms.ToArray();
             }
 
-            PrintResult result;
-
             try
-            { 
-                result = await printingService.Print(printerUri, jobName, data);
+            {
+                var result = await printingService.Print(printerUri, jobName, data);
+                await res.WriteAsJsonAsync(result);
             }
             catch (IppPrintingException e)
             {
@@ -51,8 +50,7 @@ namespace Linn.PrintService.Service.Modules
                 Console.WriteLine(e);
                 return;
             }
-
-            await res.WriteAsJsonAsync(result);
         }
+
     }
 }
