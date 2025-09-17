@@ -2,7 +2,7 @@ namespace Linn.PrintService.Printing.Services
 {
     using System.Threading.Tasks;
 
-    public interface IPrintingService
+    public interface IIppPrintingService
     {
         Task<PrintResult> Print(string printerUri, string jobName, byte[] data);
     }

@@ -17,12 +17,12 @@
 
         protected HttpResponseMessage Response { get; set; }
 
-        protected IPrintingService PrintingService { get; private set; }
+        protected IIppPrintingService PrintingService { get; private set; }
 
         [SetUp]
         public void SetUpContext()
         {
-            this.PrintingService = Substitute.For<IPrintingService>();
+            this.PrintingService = Substitute.For<IIppPrintingService>();
 
             this.Client = TestClient.With<PrintModule>(
                 services =>

@@ -10,8 +10,8 @@
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services.AddTransient<IPrintingService>(
-                x => new PrintingService(ConfigurationManager.Configuration["PRINT_USERNAME"], ConfigurationManager.Configuration["PRINT_PASSWORD"]));
+            return services.AddTransient<IIppPrintingService>(
+                x => new IppPrintingService(ConfigurationManager.Configuration["PRINT_USERNAME"], ConfigurationManager.Configuration["PRINT_PASSWORD"]));
         }
     }
 }

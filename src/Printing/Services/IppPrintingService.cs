@@ -4,12 +4,14 @@ namespace Linn.PrintService.Printing.Services
     using System.Text;
     using System.Threading.Tasks;
 
-    public class PrintingService : IPrintingService
+    using Linn.PrintService.Printing.Exceptions;
+
+    public class IppPrintingService : IIppPrintingService
     {
         private readonly string username;
         private readonly string password;
 
-        public PrintingService(string userName, string password)
+        public IppPrintingService(string userName, string password)
         {
             this.username = userName;
             this.password = password;
@@ -17,6 +19,16 @@ namespace Linn.PrintService.Printing.Services
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
+            if (string.IsNullOrWhiteSpace(printerUri))
+            {
+                throw new IppPrintingException(message: "printerUri is required");
+            }
+
+            if (data.Length == 0)
+            {
+                throw new IppPrintingException("Data cannot be empty");
+            }
+
             if (string.IsNullOrWhiteSpace(jobName))
             {
                 jobName = "PrintJob";
@@ -25,6 +37,7 @@ namespace Linn.PrintService.Printing.Services
             var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
             return await this.SendPrintJob(printerUri, ippPayload);
         }
+
 
         private byte[] BuildPayload(string printerUri, string user, string jobName, byte[] documentBytes)
         {

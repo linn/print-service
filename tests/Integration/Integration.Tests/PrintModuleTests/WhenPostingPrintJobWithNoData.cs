@@ -8,9 +8,10 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 
     using FluentAssertions;
 
-    using Linn.PrintService.Printing;
+    using Linn.PrintService.Printing.Exceptions;
 
     using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
 
     using NUnit.Framework;
 
@@ -35,6 +36,8 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
             this.Response = this.Client.PostAsync(
                 $"/print-service/print?printerUri={this.printerUri}&jobName={this.jobName}",
                 this.requestContent).Result;
+
+            this.PrintingService.Print(this.printerUri, "jobname", this.data).Throws(new IppPrintingException("Data cannot be empty"));
         }
 
         [Test]

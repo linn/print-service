@@ -1,9 +1,10 @@
 namespace Linn.PrintService.Service.Host
 {
     using Linn.Common.Logging;
-    using Linn.Common.Service.Core;
-    using Linn.Common.Service.Core.Extensions;
+    using Linn.Common.Service;
+    using Linn.Common.Service.Extensions;
     using Linn.PrintService.IoC;
+    using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -42,14 +43,22 @@ namespace Linn.PrintService.Service.Host
             });
 
             app.UseExceptionHandler(c => c.Run(async context =>
-            {
-                var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
-                var log = app.ApplicationServices.GetService<ILog>();
-                log.Error(exception?.Message, exception);
+                {
+                    var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
+                    var log = app.ApplicationServices.GetService<ILog>();
+                    log.Error(exception?.Message, exception);
 
-                var response = new { error = $"{exception?.Message}  -  {exception?.StackTrace}" };
-                await context.Response.WriteAsJsonAsync(response);
-            }));
+                    var statusCode = StatusCodes.Status500InternalServerError;
+
+                    if (exception is IppPrintingException)
+                    {
+                        statusCode = StatusCodes.Status400BadRequest;
+                    }
+
+                    context.Response.StatusCode = statusCode;
+                    var response = new { error = exception?.Message };
+                    await context.Response.WriteAsJsonAsync(response);
+                }));
 
             app.UseRouting();
             

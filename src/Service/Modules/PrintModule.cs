@@ -1,9 +1,12 @@
 namespace Linn.PrintService.Service.Modules
 {
+    using System;
     using System.IO;
     using System.Threading.Tasks;
 
-    using Linn.Common.Service.Core;
+    using Linn.Common.Service;
+    using Linn.PrintService.Printing;
+    using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
 
     using Microsoft.AspNetCore.Builder;
@@ -14,26 +17,16 @@ namespace Linn.PrintService.Service.Modules
     {
         public void MapEndpoints(IEndpointRouteBuilder app)
         {
-            app.MapPost("print-service/print", this.Print);
+            app.MapPost("/print-service/print", this.Print);
         }
 
-        private async Task Print(HttpRequest req, HttpResponse res, IPrintingService printingService)
+        private async Task Print(
+            HttpRequest req,
+            HttpResponse res,
+            string printerUri,
+            string jobName,
+            IIppPrintingService printingService)
         {
-            var jobName = req.Query["jobName"].ToString();
-            var printerUri = req.Query["printerUri"].ToString();
-
-            if (string.IsNullOrWhiteSpace(printerUri))
-            {
-                res.StatusCode = 400;
-                await res.WriteAsync("Error: printerUri is required.");
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(jobName))
-            {
-                jobName = "PrintJob";
-            }
-
             byte[] data;
             using (var ms = new MemoryStream())
             {
@@ -41,14 +34,23 @@ namespace Linn.PrintService.Service.Modules
                 data = ms.ToArray();
             }
 
-            if (data.Length == 0)
+            PrintResult result;
+
+            try
+            { 
+                result = await printingService.Print(printerUri, jobName, data);
+            }
+            catch (IppPrintingException e)
             {
-                res.StatusCode = 400;
-                await res.WriteAsync("Error: Empty data.");
+                res.StatusCode = StatusCodes.Status400BadRequest;
+                await res.WriteAsJsonAsync(new
+                                               {
+                                                   Error = "Printing Error",
+                                                   Message = e.Message
+                                               });
+                Console.WriteLine(e);
                 return;
             }
-
-            var result = await printingService.Print(printerUri, jobName, data);
 
             await res.WriteAsJsonAsync(result);
         }
