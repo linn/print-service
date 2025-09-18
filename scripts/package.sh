@@ -15,7 +15,7 @@ fi
 
 # create docker image(s)
 docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
-docker build --no-cache -t linn/printservice:$TRAVIS_BUILD_NUMBER --build-arg gitBranch=$GIT_BRANCH ./src/Service.Host/
+docker build --no-cache -t linn/print-service:$TRAVIS_BUILD_NUMBER --build-arg gitBranch=$GIT_BRANCH ./src/Service.Host/
 
 # push to dockerhub 
-docker push linn/printservice:$TRAVIS_BUILD_NUMBER
+docker push linn/print-service:$TRAVIS_BUILD_NUMBER
