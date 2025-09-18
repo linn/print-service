@@ -4,12 +4,12 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Linn.PrintService.Resources</RootNamespace>
-    <AssemblyName>Linn.PrintService.Resources</AssemblyName>
+    <AssemblyName>Linn.PrintService.Printing</AssemblyName>
+    <RootNamespace>Linn.PrintService.Printing</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Linn.Common.Resources" Version="2.2.0" />
+    <PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
   </ItemGroup>
 
 </Project>

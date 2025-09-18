@@ -1,23 +1,18 @@
 namespace Linn.PrintService.Service.Host
 {
-    using System.IO;
-
     using Linn.Common.Logging;
-    using Linn.Common.Service.Core;
-    using Linn.Common.Service.Core.Extensions;
-    using Linn.PrintService.Service.Host.Negotiators;
+    using Linn.Common.Service;
+    using Linn.Common.Service.Extensions;
+    using Linn.PrintService.IoC;
+    using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Service.Models;
 
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.FileProviders;
-    using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.JsonWebTokens;
-    using Microsoft.IdentityModel.Tokens;
 
     public class Startup
     {
@@ -26,41 +21,20 @@ namespace Linn.PrintService.Service.Host
             JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
             services.AddCors();
-            services.AddSingleton<IViewLoader, ViewLoader>();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
-            var appSettings = ApplicationSettings.Get();
-            var authority = appSettings.AuthorityUri;
-            
-            services.AddAuthentication(options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    })
-                .AddJwtBearer(options =>
-                    {
-                        options.Authority = authority;
+            services.AddSqsExtensions();
+            services.AddLog();
 
-                        options.TokenValidationParameters = new TokenValidationParameters
-                                                                {
-                                                                    ValidateIssuer = true,
-                                                                    ValidIssuer = authority,
-                                                                    ValidateAudience = false,
-                                                                    ValidAudience = "64fbgrkkslt1choig1e8km1g45",
-                                                                    ValidateLifetime = true,
-                                                                    ValidateIssuerSigningKey = true
-                                                                };
-                    });
-            
+            services.AddServices();
             services.AddAuthorization();
+
+            ApplicationSettings.Get();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
-            app.UseAuthentication();
-            
 
             app.Use(async (context, next) =>
             {
@@ -69,17 +43,24 @@ namespace Linn.PrintService.Service.Host
             });
 
             app.UseExceptionHandler(c => c.Run(async context =>
-            {
-                var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
-                var log = app.ApplicationServices.GetService<ILog>();
-                log.Error(exception?.Message, exception);
+                {
+                    var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
+                    var log = app.ApplicationServices.GetService<ILog>();
+                    log.Error(exception?.Message, exception);
 
-                var response = new { error = $"{exception?.Message}  -  {exception?.StackTrace}" };
-                await context.Response.WriteAsJsonAsync(response);
-            }));
+                    var statusCode = StatusCodes.Status500InternalServerError;
+
+                    if (exception is IppPrintingException)
+                    {
+                        statusCode = StatusCodes.Status400BadRequest;
+                    }
+
+                    context.Response.StatusCode = statusCode;
+                    var response = new { error = exception?.Message };
+                    await context.Response.WriteAsJsonAsync(response);
+                }));
 
             app.UseRouting();
-            app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>
             {
