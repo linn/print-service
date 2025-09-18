@@ -13,6 +13,7 @@
     <PackageReference Include="AWSSDK.SQS" Version="4.0.1.2" />
     <PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
+    <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
