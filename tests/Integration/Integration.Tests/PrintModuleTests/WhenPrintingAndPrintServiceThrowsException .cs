@@ -13,7 +13,7 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 
     using NUnit.Framework;
 
-    public class WhenPostingPrintJobWithNoPrinterUri : ContextBase
+    public class WhenPrintingAndPrintServiceThrowsException : ContextBase
     {
         private HttpContent requestContent;
         private string printerUri;
