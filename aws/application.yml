@@ -133,14 +133,6 @@ Resources:
               'gelf-address': 'udp://syslog.linn.co.uk:12201'
               'tag': !Sub printService-${dockerTag}-ecs-task
           Environment:
-            - Name: DATABASE_HOST
-              Value: !Ref databaseHost
-            - Name: DATABASE_NAME
-              Value: !Ref databaseName
-            - Name: DATABASE_USER_ID
-              Value: !Ref databaseUserId
-            - Name: DATABASE_PASSWORD
-              Value: !Ref databasePassword
             - Name: APP_ROOT
               Value: !Ref appRoot
             - Name: PROXY_ROOT
