@@ -145,6 +145,12 @@ Resources:
               Value:
                 Fn::ImportValue:
                   !Sub "kms-key-alias${environmentSuffix}"
+          DockerLabels:
+            traefik.enable: "true"
+            traefik.http.routers.printservice.entrypoints: "web"
+            traefik.http.routers.printservice.rule: "PathPrefix(`/print-service/`)"
+            traefik.http.services.printservice.loadbalancer.healthcheck.path: "/healthcheck"
+           
   printServiceService:
     Type: AWS::ECS::Service
     Properties:
