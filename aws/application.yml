@@ -119,7 +119,7 @@ Resources:
         - Name: printService
           Cpu: '1'
           Essential: 'true'
-          Image: !Sub docker.io/linn/printService:${dockerTag}
+          Image: !Sub docker.io/linn/print-service:${dockerTag}
           PortMappings:
             - ContainerPort: 5050
           Memory: '250'
@@ -131,7 +131,7 @@ Resources:
             LogDriver: gelf
             Options:
               'gelf-address': 'udp://syslog.linn.co.uk:12201'
-              'tag': !Sub printService-${dockerTag}-ecs-task
+              'tag': !Sub print-service-${dockerTag}-ecs-task
           Environment:
             - Name: APP_ROOT
               Value: !Ref appRoot
