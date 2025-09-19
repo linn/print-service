@@ -14,18 +14,6 @@ Parameters:
   authorityUri:
     Type: String
     Description: OIDC authority uri
-  databaseHost:
-    Type: String
-    Description: Database host
-  databaseName:
-    Type: String
-    Description: Database name
-  databaseUserId:
-    Type: String
-    Description: Database user id
-  databasePassword:
-    Type: String
-    Description: Database password
   loggingEnvironment:
     Type: String
     Description: Logging Environment
