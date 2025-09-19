@@ -160,10 +160,3 @@ Resources:
         - Field: instanceId
           Type: spread
       TaskDefinition: !Ref printServiceTaskDefinition
-      Role: ecsServiceRole
-      LoadBalancers:
-        - ContainerName: printService
-          ContainerPort: 5050
-          TargetGroupArn:
-            Fn::ImportValue:
-              !Sub "printServiceTargetGroupArn${environmentSuffix}"
