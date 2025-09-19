@@ -48,7 +48,6 @@ namespace Linn.PrintService.Printing.Services
 
             var result = await this.SendIppRequest(printerUri, ippPayload);
 
-            // Mark "State" field — you can parse proper IPP attributes later if needed.
             result.State = result.Success ? "unknown" : "error";
             return result;
         }
