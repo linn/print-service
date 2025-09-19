@@ -6,6 +6,8 @@
 
         public int HttpStatus { get; set; }
 
-        public string? ResponsePreview { get; set; }
+        public string ResponsePreview { get; set; }
+
+        public string? State { get; set; }
     }
 }

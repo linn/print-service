@@ -5,5 +5,7 @@ namespace Linn.PrintService.Printing.Services
     public interface IIppPrintingService
     {
         Task<PrintResult> Print(string printerUri, string jobName, byte[] data);
+
+        Task<PrintResult> GetStatus(string printerUri);
     }
 }

@@ -9,9 +9,7 @@ RUN rm -rf /var/lib/apt/lists/*
 EXPOSE 5050
 
 COPY bin/Release/net9.0/publish/ /app/bin/
-COPY client/build/ /app/client/build/
-COPY views/ /app/views/
-     
+
 ENV APP_PATH /app/
 ENV GIT_BRANCH $gitBranch
 

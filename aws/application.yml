@@ -14,18 +14,6 @@ Parameters:
   authorityUri:
     Type: String
     Description: OIDC authority uri
-  databaseHost:
-    Type: String
-    Description: Database host
-  databaseName:
-    Type: String
-    Description: Database name
-  databaseUserId:
-    Type: String
-    Description: Database user id
-  databasePassword:
-    Type: String
-    Description: Database password
   loggingEnvironment:
     Type: String
     Description: Logging Environment
@@ -119,7 +107,7 @@ Resources:
         - Name: printService
           Cpu: '1'
           Essential: 'true'
-          Image: !Sub docker.io/linn/printService:${dockerTag}
+          Image: !Sub docker.io/linn/print-service:${dockerTag}
           PortMappings:
             - ContainerPort: 5050
           Memory: '250'
@@ -131,16 +119,8 @@ Resources:
             LogDriver: gelf
             Options:
               'gelf-address': 'udp://syslog.linn.co.uk:12201'
-              'tag': !Sub printService-${dockerTag}-ecs-task
+              'tag': !Sub print-service-${dockerTag}-ecs-task
           Environment:
-            - Name: DATABASE_HOST
-              Value: !Ref databaseHost
-            - Name: DATABASE_NAME
-              Value: !Ref databaseName
-            - Name: DATABASE_USER_ID
-              Value: !Ref databaseUserId
-            - Name: DATABASE_PASSWORD
-              Value: !Ref databasePassword
             - Name: APP_ROOT
               Value: !Ref appRoot
             - Name: PROXY_ROOT
@@ -165,6 +145,12 @@ Resources:
               Value:
                 Fn::ImportValue:
                   !Sub "kms-key-alias${environmentSuffix}"
+          DockerLabels:
+            traefik.enable: "true"
+            traefik.http.routers.printservice.entrypoints: "web"
+            traefik.http.routers.printservice.rule: "PathPrefix(`/print-service/`)"
+            traefik.http.services.printservice.loadbalancer.healthcheck.path: "/healthcheck"
+           
   printServiceService:
     Type: AWS::ECS::Service
     Properties:
@@ -180,10 +166,3 @@ Resources:
         - Field: instanceId
           Type: spread
       TaskDefinition: !Ref printServiceTaskDefinition
-      Role: ecsServiceRole
-      LoadBalancers:
-        - ContainerName: printService
-          ContainerPort: 5050
-          TargetGroupArn:
-            Fn::ImportValue:
-              !Sub "printServiceTargetGroupArn${environmentSuffix}"

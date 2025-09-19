@@ -2,7 +2,6 @@ namespace Linn.PrintService.Printing.Services
 {
     using System.Net;
     using System.Text;
-    using System.Threading.Tasks;
 
     using Linn.PrintService.Printing.Exceptions;
 
@@ -26,7 +25,7 @@ namespace Linn.PrintService.Printing.Services
 
             if (data.Length == 0)
             {
-                throw new IppPrintingException("Data cannot be empty");
+                throw new IppPrintingException(message: "Data cannot be empty");
             }
 
             if (string.IsNullOrWhiteSpace(jobName))
@@ -35,9 +34,23 @@ namespace Linn.PrintService.Printing.Services
             }
 
             var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
-            return await this.SendPrintJob(printerUri, ippPayload);
+            return await this.SendIppRequest(printerUri, ippPayload);
         }
 
+        public async Task<PrintResult> GetStatus(string printerUri)
+        {
+            if (string.IsNullOrWhiteSpace(printerUri))
+            {
+                throw new IppPrintingException("printerUri is required");
+            }
+
+            var ippPayload = this.BuildStatusPayload(printerUri, this.username);
+
+            var result = await this.SendIppRequest(printerUri, ippPayload);
+
+            result.State = result.Success ? "unknown" : "error";
+            return result;
+        }
 
         private byte[] BuildPayload(string printerUri, string user, string jobName, byte[] documentBytes)
         {
@@ -73,6 +86,32 @@ namespace Linn.PrintService.Printing.Services
             }
         }
 
+        private byte[] BuildStatusPayload(string printerUri, string user)
+        {
+            using (var ms = new MemoryStream())
+            {
+                ms.WriteByte(0x01); // major version
+                ms.WriteByte(0x00); // minor version
+                ms.WriteByte(0x00); // op-id high
+                ms.WriteByte(0x0B); // Get-Printer-Attributes
+                ms.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(1)), 0, 4);
+
+                ms.WriteByte(0x01); // operation-attributes-tag
+
+                var attrs = Array.Empty<byte>();
+                attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
+                attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
+                attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
+                attrs = this.AddAttr(attrs, 0x42, "requesting-user-name", user);
+
+                ms.Write(attrs, 0, attrs.Length);
+
+                ms.WriteByte(0x03); // end-of-attributes-tag
+
+                return ms.ToArray();
+            }
+        }
+
         private byte[] AddAttr(byte[] attrs, byte tag, string name, string value)
         {
             using (var ms = new MemoryStream())
@@ -93,17 +132,17 @@ namespace Linn.PrintService.Printing.Services
             }
         }
 
-        private async Task<PrintResult> SendPrintJob(string uri, byte[] ippPayload)
+        private async Task<PrintResult> SendIppRequest(string uri, byte[] ippPayload)
         {
             try
             {
                 var credentials = new NetworkCredential(this.username, this.password);
 
                 using (var handler = new HttpClientHandler
-                                         {
-                                             Credentials = credentials,
-                                             PreAuthenticate = true
-                                         })
+                {
+                    Credentials = credentials,
+                    PreAuthenticate = true
+                })
                 using (var client = new HttpClient(handler))
                 using (var content = new ByteArrayContent(ippPayload))
                 {
@@ -114,21 +153,21 @@ namespace Linn.PrintService.Printing.Services
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
 
                     return new PrintResult
-                               {
-                                   Success = response.IsSuccessStatusCode,
-                                   HttpStatus = (int)response.StatusCode,
-                                   ResponsePreview = this.HexPreview(respBytes, 256)
-                               };
+                    {
+                        Success = response.IsSuccessStatusCode,
+                        HttpStatus = (int)response.StatusCode,
+                        ResponsePreview = this.HexPreview(respBytes, 256)
+                    };
                 }
             }
             catch (Exception ex)
             {
                 return new PrintResult
-                           {
-                               Success = false,
-                               HttpStatus = 500,
-                               ResponsePreview = ex.Message
-                           };
+                {
+                    Success = false,
+                    HttpStatus = 500,
+                    ResponsePreview = ex.Message
+                };
             }
         }
 
