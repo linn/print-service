@@ -3,21 +3,26 @@ namespace Linn.PrintService.Printing.Services
     using System.Net;
     using System.Text;
 
+    using Linn.Common.Logging;
     using Linn.PrintService.Printing.Exceptions;
 
     public class IppPrintingService : IIppPrintingService
     {
         private readonly string username;
         private readonly string password;
+        private readonly ILog log;
 
-        public IppPrintingService(string userName, string password)
+        public IppPrintingService(string userName, string password, ILog log)
         {
             this.username = userName;
             this.password = password;
+            this.log = log;
         }
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
+            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}");
+
             if (string.IsNullOrWhiteSpace(printerUri))
             {
                 throw new IppPrintingException(message: "printerUri is required");
@@ -33,8 +38,19 @@ namespace Linn.PrintService.Printing.Services
                 jobName = "PrintJob";
             }
 
-            var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
-            return await this.SendIppRequest(printerUri, ippPayload);
+            try
+            {
+                var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
+                var result = await this.SendIppRequest(printerUri, ippPayload);
+
+                this.log.Info($"Print completed: printerUri={printerUri}, jobName={jobName}, success={result.Success}, httpStatus={result.HttpStatus}");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                this.log.Error($"Print exception: {ex.Message}", ex);
+                throw;
+            }
         }
 
         public async Task<PrintResult> GetStatus(string printerUri)
@@ -49,11 +65,15 @@ namespace Linn.PrintService.Printing.Services
             var result = await this.SendIppRequest(printerUri, ippPayload);
 
             result.State = result.Success ? "unknown" : "error";
+            this.log.Info($"GetStatus completed: printerUri={printerUri}, success={result.Success}, httpStatus={result.HttpStatus}");
+
             return result;
         }
 
         private byte[] BuildPayload(string printerUri, string user, string jobName, byte[] documentBytes)
         {
+            this.log.Info($"Building IPP payload for printerUri={printerUri}, user={user}, jobName={jobName}, documentBytesLength={documentBytes?.Length ?? 0}");
+
             using (var ms = new MemoryStream())
             {
                 // IPP header
@@ -81,6 +101,7 @@ namespace Linn.PrintService.Printing.Services
 
                 // document bytes
                 ms.Write(documentBytes, 0, documentBytes.Length);
+                this.log.Info("IPP payload built successfully.");
 
                 return ms.ToArray();
             }
@@ -88,6 +109,7 @@ namespace Linn.PrintService.Printing.Services
 
         private byte[] BuildStatusPayload(string printerUri, string user)
         {
+            this.log.Info($"Building status payload for printerUri={printerUri}, user={user}");
             using (var ms = new MemoryStream())
             {
                 ms.WriteByte(0x01); // major version
@@ -107,13 +129,16 @@ namespace Linn.PrintService.Printing.Services
                 ms.Write(attrs, 0, attrs.Length);
 
                 ms.WriteByte(0x03); // end-of-attributes-tag
-
+                
+                this.log.Info("Status payload built successfully.");
                 return ms.ToArray();
             }
         }
 
         private byte[] AddAttr(byte[] attrs, byte tag, string name, string value)
         {
+            this.log.Info($"Adding attribute: tag=0x{tag:x2}, name={name}, value={value}");
+
             using (var ms = new MemoryStream())
             {
                 ms.Write(attrs, 0, attrs.Length);
@@ -128,12 +153,15 @@ namespace Linn.PrintService.Printing.Services
                 ms.Write(BitConverter.GetBytes((ushort)IPAddress.HostToNetworkOrder((short)valueBytes.Length)), 0, 2);
                 ms.Write(valueBytes, 0, valueBytes.Length);
 
+                this.log.Info($"Attribute {name} added.");
                 return ms.ToArray();
             }
         }
 
         private async Task<PrintResult> SendIppRequest(string uri, byte[] ippPayload)
         {
+            this.log.Info($"Sending IPP request to {uri} with payload length {ippPayload?.Length ?? 0}");
+
             try
             {
                 var credentials = new NetworkCredential(this.username, this.password);
@@ -152,6 +180,8 @@ namespace Linn.PrintService.Printing.Services
                     var response = await client.PostAsync(uri, content);
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
 
+                    this.log.Info($"IPP request sent. HTTP status: {(int)response.StatusCode}");
+
                     return new PrintResult
                     {
                         Success = response.IsSuccessStatusCode,
@@ -162,6 +192,7 @@ namespace Linn.PrintService.Printing.Services
             }
             catch (Exception ex)
             {
+                this.log.Error($"IPP request failed: {ex.Message}", ex);
                 return new PrintResult
                 {
                     Success = false,
