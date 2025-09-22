@@ -23,6 +23,7 @@ namespace Linn.PrintService.Service.Host
             services.AddCors();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
+            services.AddCredentialsExtensions();
             services.AddSqsExtensions();
             services.AddLog();
 

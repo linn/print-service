@@ -53,7 +53,7 @@ namespace Linn.PrintService.Printing.Services
             }
         }
 
-        public async Task<PrintResult> GetStatus(string printerUri)
+        public async Task<PrintResult> GetStatusReport(string printerUri)
         {
             if (string.IsNullOrWhiteSpace(printerUri))
             {
