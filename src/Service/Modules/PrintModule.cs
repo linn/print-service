@@ -15,7 +15,7 @@ namespace Linn.PrintService.Service.Modules
         public void MapEndpoints(IEndpointRouteBuilder app)
         {
             app.MapPost("/print-service/print", this.Print);
-            app.MapGet("/print-service/detailed-status", this.StatusReport);
+            app.MapGet("/print-service/detailed-status", this.DetailedStatus);
             app.MapGet("/print-service/status", this.Status);
         }
 
@@ -49,7 +49,7 @@ namespace Linn.PrintService.Service.Modules
             await res.WriteAsJsonAsync(result);
         }
 
-        private async Task StatusReport(
+        private async Task DetailedStatus(
             HttpRequest req,
             HttpResponse res,
             string printerUri,
