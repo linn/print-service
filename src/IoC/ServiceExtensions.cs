@@ -11,7 +11,10 @@
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services.AddTransient<IIppPrintingService>(
-                x => new IppPrintingService(ConfigurationManager.Configuration["PRINT_USERNAME"], ConfigurationManager.Configuration["PRINT_PASSWORD"]));
+                x => new IppPrintingService(
+                    ConfigurationManager.Configuration["PRINT_USERNAME"],
+                    ConfigurationManager.Configuration["PRINT_PASSWORD"],
+                    x.GetRequiredService<Linn.Common.Logging.ILog>()));
         }
     }
 }
