@@ -15,6 +15,7 @@ namespace Linn.PrintService.Service.Modules
         public void MapEndpoints(IEndpointRouteBuilder app)
         {
             app.MapPost("/print-service/print", this.Print);
+            app.MapGet("/print-service/detailed-status", this.DetailedStatus);
             app.MapGet("/print-service/status", this.Status);
         }
 
@@ -48,7 +49,7 @@ namespace Linn.PrintService.Service.Modules
             await res.WriteAsJsonAsync(result);
         }
 
-        private async Task Status(
+        private async Task DetailedStatus(
             HttpRequest req,
             HttpResponse res,
             string printerUri,
@@ -58,7 +59,7 @@ namespace Linn.PrintService.Service.Modules
 
             try
             {
-                result = await printingService.GetStatus(printerUri);
+                result = await printingService.GetDetailedStatus(printerUri);
             }
             catch (IppPrintingException e)
             {
@@ -73,6 +74,12 @@ namespace Linn.PrintService.Service.Modules
             }
 
             await res.WriteAsJsonAsync(result);
+        }
+
+        private async Task Status(HttpRequest req, HttpResponse res)
+        {
+            res.StatusCode = StatusCodes.Status200OK;
+            await res.WriteAsJsonAsync(new { Status = "OK" });
         }
     }
 }
