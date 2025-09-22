@@ -30,10 +30,6 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
     PROXY_ROOT=http://app.linn.co.uk
     ENV_SUFFIX=-sys
   fi
-else
-  # not main - deploy to int if required
-  echo do not deploy to int
-fi
 
 # load the secret variables but hide the output from the travis log
 source ./secrets.env > /dev/null 2>&1
