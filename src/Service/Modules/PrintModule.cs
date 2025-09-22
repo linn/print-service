@@ -59,7 +59,7 @@ namespace Linn.PrintService.Service.Modules
 
             try
             {
-                result = await printingService.GetStatusReport(printerUri);
+                result = await printingService.GetDetailedStatus(printerUri);
             }
             catch (IppPrintingException e)
             {

@@ -6,6 +6,6 @@ namespace Linn.PrintService.Printing.Services
     {
         Task<PrintResult> Print(string printerUri, string jobName, byte[] data);
 
-        Task<PrintResult> GetStatusReport(string printerUri);
+        Task<PrintResult> GetDetailedStatus(string printerUri);
     }
 }
