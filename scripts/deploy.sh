@@ -29,16 +29,16 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
     APP_ROOT=http://app-sys.linn.co.uk
     PROXY_ROOT=http://app.linn.co.uk
     ENV_SUFFIX=-sys
-    
-    # load the secret variables but hide the output from the travis log
-    source ./secrets.env > /dev/null 2>&1
-      
-    # deploy the service to amazon (todo: move this after this else when ready to deploy to main
-    aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$TRAVIS_BUILD_NUMBER appRoot=$APP_ROOT proxyRoot=$PROXY_ROOT authorityUri=$AUTHORITY_URI loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
-
-    echo "deploy complete"
   fi
 else
   # not main - deploy to int if required
-  echo not deploying - not on branch main 
+  echo do not deploy to int
 fi
+
+# load the secret variables but hide the output from the travis log
+source ./secrets.env > /dev/null 2>&1
+
+# deploy the service to amazon
+aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$TRAVIS_BUILD_NUMBER appRoot=$APP_ROOT proxyRoot=$PROXY_ROOT authorityUri=$AUTHORITY_URI loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH smtpHostname=$SMTP_HOSTNAME pdfServiceRoot=$PDF_SERVICE_ROOT environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
+
+echo "deploy complete"
