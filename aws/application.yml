@@ -92,6 +92,14 @@ Resources:
                 Action:
                   - s3:*
                 Resource: !Sub "arn:aws:s3:::auth${environmentSuffix}*-keysbucket*"
+      StackLogGroup: 
+        Type: AWS::LogService::LogGroup
+        DeletionPolicy: Delete
+        Properties:
+          LogGroupName:
+          Fn::Sub: ${AWS::StackName}-LogGroup}
+          RetentionInDays: 14
+        
   printServiceTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -116,10 +124,11 @@ Resources:
               - "CMD-SHELL"
               - "curl -f http://localhost:5050/healthcheck || exit 1"
           LogConfiguration:
-            LogDriver: gelf
+            LogDriver: awslogs
             Options:
-              'gelf-address': 'udp://syslog.linn.co.uk:12201'
-              'tag': !Sub print-service-${dockerTag}-ecs-task
+              awslogs-region: !Ref AWS::Region
+              awslogs-group: !Ref StackLogGroup
+              awslogs-stream prefix: !Ref AWS::StackName
           Environment:
             - Name: APP_ROOT
               Value: !Ref appRoot
