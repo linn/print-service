@@ -8,6 +8,7 @@ namespace Linn.PrintService.Service.Modules
     using Linn.PrintService.Printing.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
 
     public class PrintModule : IModule
@@ -22,9 +23,9 @@ namespace Linn.PrintService.Service.Modules
         private async Task Print(
             HttpRequest req,
             HttpResponse res,
-            string printerUri,
-            string jobName,
-            IIppPrintingService printingService)
+            [FromQuery] string printerUri,
+            [FromQuery] string jobName,
+            [FromServices] IIppPrintingService printingService)
         {
             byte[] data;
             using (var ms = new MemoryStream())
@@ -52,8 +53,8 @@ namespace Linn.PrintService.Service.Modules
         private async Task DetailedStatus(
             HttpRequest req,
             HttpResponse res,
-            string printerUri,
-            IIppPrintingService printingService)
+            [FromQuery] string printerUri,
+            [FromServices] IIppPrintingService printingService)
         {
             PrintResult result;
 
