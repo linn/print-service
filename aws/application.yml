@@ -96,8 +96,7 @@ Resources:
         Type: AWS::LogService::LogGroup
         DeletionPolicy: Delete
         Properties:
-          LogGroupName:
-          Fn::Sub: ${AWS::StackName}-LogGroup}
+          LogGroupName: Fn::Sub: ${AWS::StackName}-LogGroup}
           RetentionInDays: 14
         
   printServiceTaskDefinition:
