@@ -124,7 +124,7 @@ Resources:
             Options:
               awslogs-region: !Ref AWS::Region
               awslogs-group: !Ref StackLogGroup
-              awslogs-stream prefix: !Ref AWS::StackName
+              awslogs-stream-prefix: !Ref AWS::StackName
           Environment:
             - Name: PRINT_USERNAME
               Value: !Ref printUsername
