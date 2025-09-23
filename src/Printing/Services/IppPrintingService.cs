@@ -2,7 +2,6 @@ namespace Linn.PrintService.Printing.Services
 {
     using System.Net;
     using System.Text;
-
     using Linn.Common.Logging;
     using Linn.PrintService.Printing.Exceptions;
 
@@ -21,7 +20,7 @@ namespace Linn.PrintService.Printing.Services
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
-            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}, username = {this.username}");
+            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}, username = {this.username}, password length = {this.password.Length}");
 
             if (string.IsNullOrWhiteSpace(this.password))
             {
@@ -48,7 +47,7 @@ namespace Linn.PrintService.Printing.Services
                 var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
                 var result = await this.SendIppRequest(printerUri, ippPayload);
 
-                this.log.Info($"Print completed: printerUri={printerUri}, jobName={jobName}, success={result.Success}, httpStatus={result.HttpStatus}");
+                this.log.Info($"Print completed: printerUri={printerUri}, jobName={jobName}, success={result.Success}, httpStatus={result.HttpStatus} message={result.ResponsePreview}");
                 return result;
             }
             catch (Exception ex)
@@ -60,6 +59,8 @@ namespace Linn.PrintService.Printing.Services
 
         public async Task<PrintResult> GetDetailedStatus(string printerUri)
         {
+            this.log.Info($"Status requested: printerUri={printerUri}, username = {this.username}, password length = {this.password.Length}");
+
             if (string.IsNullOrWhiteSpace(printerUri))
             {
                 throw new IppPrintingException("printerUri is required");
@@ -70,7 +71,7 @@ namespace Linn.PrintService.Printing.Services
             var result = await this.SendIppRequest(printerUri, ippPayload);
 
             result.State = result.Success ? "unknown" : "error";
-            this.log.Info($"GetStatus completed: printerUri={printerUri}, success={result.Success}, httpStatus={result.HttpStatus}");
+            this.log.Info($"GetStatus completed: printerUri={printerUri}, success={result.Success}, httpStatus={result.HttpStatus}, message={result.ResponsePreview}");
 
             return result;
         }
