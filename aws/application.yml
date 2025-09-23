@@ -90,7 +90,7 @@ Resources:
                   - s3:*
                 Resource: !Sub "arn:aws:s3:::auth${environmentSuffix}*-keysbucket*"
   StackLogGroup: 
-    Type: AWS::LogService::LogGroup
+    Type: AWS::Logs::LogGroup
     DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub ${AWS::StackName}-LogGroup}
