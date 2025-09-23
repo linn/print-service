@@ -30,6 +30,7 @@ namespace Linn.PrintService.Service.Host
             services.AddServices();
             services.AddAuthorization();
 
+            // we need this line for reflection to work in the modules
             ApplicationSettings.Get();
         }
 

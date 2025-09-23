@@ -130,13 +130,10 @@ Resources:
               awslogs-group: !Ref StackLogGroup
               awslogs-stream prefix: !Ref AWS::StackName
           Environment:
-            - Name: APP_ROOT
-              Value: !Ref appRoot
-            - Name: PROXY_ROOT
-              Value: !Ref proxyRoot
-            - Name: AUTHORITY_URI
-              Value: !Ref authorityUri
-            - Name: BUILD_NUMBER
+            - Name: PRINT_USERNAME
+              Value: !Ref printUsername
+            - Name: PRINT_PASSWORD
+              Value: !Ref printPassword
               Value: !Ref dockerTag
             - Name: LOG_AMAZON_SQSQUEUEURI
               Value: !ImportValue logging-queue-url
