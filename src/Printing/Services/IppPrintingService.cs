@@ -21,7 +21,12 @@ namespace Linn.PrintService.Printing.Services
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
-            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}");
+            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}, username = {this.username}");
+
+            if (string.IsNullOrWhiteSpace(this.password))
+            {
+                this.log.Info("The password field is empty.");
+            }
 
             if (string.IsNullOrWhiteSpace(printerUri))
             {
