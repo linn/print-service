@@ -20,7 +20,7 @@ namespace Linn.PrintService.Printing.Services
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
-            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}, username = {this.username}, password length = {this.password.Length}");
+            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}");
 
             if (string.IsNullOrWhiteSpace(this.password))
             {
@@ -47,7 +47,7 @@ namespace Linn.PrintService.Printing.Services
                 var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
                 var result = await this.SendIppRequest(printerUri, ippPayload);
 
-                this.log.Info($"Print completed: printerUri={printerUri}, jobName={jobName}, success={result.Success}, httpStatus={result.HttpStatus} message={result.ResponsePreview}");
+                this.log.Info($"Print completed: printerUri={printerUri}, jobName={jobName}, success={result.Success}, httpStatus={result.HttpStatus}");
                 return result;
             }
             catch (Exception ex)
@@ -71,7 +71,7 @@ namespace Linn.PrintService.Printing.Services
             var result = await this.SendIppRequest(printerUri, ippPayload);
 
             result.State = result.Success ? "unknown" : "error";
-            this.log.Info($"GetStatus completed: printerUri={printerUri}, success={result.Success}, httpStatus={result.HttpStatus}, message={result.ResponsePreview}");
+            this.log.Info($"GetStatus completed: printerUri={printerUri}, success={result.Success}, httpStatus={result.HttpStatus}");
 
             return result;
         }
@@ -170,18 +170,16 @@ namespace Linn.PrintService.Printing.Services
 
             try
             {
-                var credentials = new NetworkCredential(this.username, this.password);
-
-                using (var handler = new HttpClientHandler
-                {
-                    Credentials = credentials,
-                    PreAuthenticate = true
-                })
-                using (var client = new HttpClient(handler))
+                using (var client = new HttpClient())
                 using (var content = new ByteArrayContent(ippPayload))
                 {
                     content.Headers.ContentType =
                         new System.Net.Http.Headers.MediaTypeHeaderValue("application/ipp");
+
+                    var authValue = Convert.ToBase64String(
+                        Encoding.UTF8.GetBytes($"{this.username}:{this.password}"));
+                    client.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authValue);
 
                     var response = await client.PostAsync(uri, content);
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
