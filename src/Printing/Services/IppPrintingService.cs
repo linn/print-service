@@ -10,12 +10,14 @@ namespace Linn.PrintService.Printing.Services
         private readonly string username;
         private readonly string password;
         private readonly ILog log;
+        private readonly HttpClient httpClient;
 
-        public IppPrintingService(string userName, string password, ILog log)
+        public IppPrintingService(string userName, string password, ILog log, HttpClient httpClient)
         {
             this.username = userName;
             this.password = password;
             this.log = log;
+            this.httpClient = httpClient;
         }
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
@@ -44,7 +46,7 @@ namespace Linn.PrintService.Printing.Services
 
             try
             {
-                var ippPayload = this.BuildPayload(printerUri, this.username, jobName, data);
+                var ippPayload = this.BuildPayload(printerUri, jobName, data);
                 var result = await this.SendIppRequest(printerUri, ippPayload);
 
                 this.log.Info($"Print completed: printerUri={printerUri}, "
@@ -70,7 +72,7 @@ namespace Linn.PrintService.Printing.Services
                 throw new IppPrintingException("printerUri is required");
             }
 
-            var ippPayload = this.BuildStatusPayload(printerUri, this.username);
+            var ippPayload = this.BuildStatusPayload(printerUri);
 
             var result = await this.SendIppRequest(printerUri, ippPayload);
 
@@ -82,9 +84,9 @@ namespace Linn.PrintService.Printing.Services
             return result;
         }
 
-        private byte[] BuildPayload(string printerUri, string user, string jobName, byte[] documentBytes)
+        private byte[] BuildPayload(string printerUri, string jobName, byte[] documentBytes)
         {
-            this.log.Info($"Building IPP payload for printerUri={printerUri}, user={user}, jobName={jobName}, documentBytesLength={documentBytes?.Length ?? 0}");
+            this.log.Info($"Building IPP payload for printerUri={printerUri}, user={this.username}, jobName={jobName}, documentBytesLength={documentBytes?.Length ?? 0}");
 
             using (var ms = new MemoryStream())
             {
@@ -102,7 +104,7 @@ namespace Linn.PrintService.Printing.Services
                 attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
                 attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
                 attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
-                attrs = this.AddAttr(attrs, 0x42, "requesting-user-name", user);
+                attrs = this.AddAttr(attrs, 0x42, "requesting-user-name", this.username);
                 attrs = this.AddAttr(attrs, 0x42, "job-name", jobName);
                 attrs = this.AddAttr(attrs, 0x49, "document-format", "application/octet-stream");
 
@@ -119,9 +121,9 @@ namespace Linn.PrintService.Printing.Services
             }
         }
 
-        private byte[] BuildStatusPayload(string printerUri, string user)
+        private byte[] BuildStatusPayload(string printerUri)
         {
-            this.log.Info($"Building status payload for printerUri={printerUri}, user={user}");
+            this.log.Info($"Building status payload for printerUri={printerUri}, user={this.username}");
             using (var ms = new MemoryStream())
             {
                 ms.WriteByte(0x01); // major version
@@ -136,7 +138,7 @@ namespace Linn.PrintService.Printing.Services
                 attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
                 attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
                 attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
-                attrs = this.AddAttr(attrs, 0x42, "requesting-user-name", user);
+                attrs = this.AddAttr(attrs, 0x42, "requesting-user-name", this.username);
 
                 ms.Write(attrs, 0, attrs.Length);
 
@@ -176,7 +178,6 @@ namespace Linn.PrintService.Printing.Services
 
             try
             {
-                using (var client = new HttpClient())
                 using (var content = new ByteArrayContent(ippPayload))
                 {
                     content.Headers.ContentType =
@@ -184,10 +185,10 @@ namespace Linn.PrintService.Printing.Services
 
                     var authValue = Convert.ToBase64String(
                         Encoding.UTF8.GetBytes($"{this.username}:{this.password}"));
-                    client.DefaultRequestHeaders.Authorization =
+                    this.httpClient.DefaultRequestHeaders.Authorization =
                         new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authValue);
 
-                    var response = await client.PostAsync(uri, content);
+                    var response = await this.httpClient.PostAsync(uri, content);
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
 
                     this.log.Info($"IPP request sent. HTTP status: {(int)response.StatusCode}");
