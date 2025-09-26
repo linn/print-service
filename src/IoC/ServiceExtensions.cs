@@ -15,7 +15,7 @@
                     ConfigurationManager.Configuration["PRINT_USERNAME"],
                     ConfigurationManager.Configuration["PRINT_PASSWORD"],
                     x.GetRequiredService<Linn.Common.Logging.ILog>(),
-                    x.GetRequiredService<HttpClient>()));
+                    new HttpClient()));
         }
     }
 }
