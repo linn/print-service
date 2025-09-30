@@ -69,7 +69,6 @@ namespace Linn.PrintService.Printing.Services
                 var result = await this.SendIppRequest(printerUri, ippPayload);
 
                 result.State = result.Success ? "unknown" : "error";
-
                 this.log.Info($"GetStatus completed: printerUri={printerUri}, " +
                               $"success={result.Success}, httpStatus={result.HttpStatus}, " +
                               $"message={result.ResponsePreview}");
