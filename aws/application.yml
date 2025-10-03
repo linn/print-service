@@ -5,15 +5,12 @@ Parameters:
   dockerTag:
     Type: String
     Description: Docker tag to deploy
-  appRoot:
+  printUsername:
     Type: String
-    Description: app root
-  proxyRoot:
+    Description: print username
+  printPassword:
     Type: String
-    Description: proxy root
-  authorityUri:
-    Type: String
-    Description: OIDC authority uri
+    Description: print password
   loggingEnvironment:
     Type: String
     Description: Logging Environment
@@ -92,12 +89,12 @@ Resources:
                 Action:
                   - s3:*
                 Resource: !Sub "arn:aws:s3:::auth${environmentSuffix}*-keysbucket*"
-      StackLogGroup: 
-        Type: AWS::LogService::LogGroup
-        DeletionPolicy: Delete
-        Properties:
-          LogGroupName: Fn::Sub: ${AWS::StackName}-LogGroup}
-          RetentionInDays: 14
+  StackLogGroup: 
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: !Sub ${AWS::StackName}-LogGroup
+      RetentionInDays: 14
         
   printServiceTaskDefinition:
     Type: AWS::ECS::TaskDefinition
@@ -127,13 +124,12 @@ Resources:
             Options:
               awslogs-region: !Ref AWS::Region
               awslogs-group: !Ref StackLogGroup
-              awslogs-stream prefix: !Ref AWS::StackName
+              awslogs-stream-prefix: !Ref AWS::StackName
           Environment:
             - Name: PRINT_USERNAME
               Value: !Ref printUsername
             - Name: PRINT_PASSWORD
               Value: !Ref printPassword
-              Value: !Ref dockerTag
             - Name: LOG_AMAZON_SQSQUEUEURI
               Value: !ImportValue logging-queue-url
             - Name: LOG_ENVIRONMENT
