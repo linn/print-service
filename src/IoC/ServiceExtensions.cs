@@ -51,6 +51,7 @@
                 catch (Exception ex)
                 {
                     log.Write(LoggingLevel.Error, null, $"Failed to configure IPP HTTP client: {ex.Message}", ex);
+
                     throw new IppPrintingException("Failed to configure IPP HTTP client.", ex);
                 }
             });
