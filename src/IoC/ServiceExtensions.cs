@@ -29,22 +29,45 @@
                     throw new IppPrintingException("Username and password must be configured.");
                 }
 
-                log.Write(LoggingLevel.Info, null, $"PRINT_USERNAME length = {username.Length}, PRINT_PASSWORD length = {password.Length}");
+                log.Write(LoggingLevel.Info, null, $"PRINT_USERNAME = {username}, PRINT_PASSWORD length = {password.Length}");
 
                 try
                 {
-                    var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+                    var rawAuthString = $"{username}:{password}";
+                    log.Write(LoggingLevel.Info, null, $"Raw auth string length: {rawAuthString.Length}");
+
+                    var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(rawAuthString));
+                    log.Write(LoggingLevel.Info, null, $"Encoded auth length: {authValue.Length}");
+
                     client.DefaultRequestHeaders.Authorization =
                         new AuthenticationHeaderValue("Basic", authValue);
 
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
 
-                    var headersLog = string.Join(", ", client.DefaultRequestHeaders.Select(h => $"{h.Key}"));
-
-                    log.Write(LoggingLevel.Info, null, $"Request headers configured: {headersLog}");
+                    var authHeader = client.DefaultRequestHeaders.Authorization?.Parameter;
+                    var maskedAuth = authHeader != null && authHeader.Length > 8
+                        ? authHeader.Substring(0, 8) + "...(truncated)"
+                        : authHeader ?? "(null)";
+                   
+                    log.Write(LoggingLevel.Info, null, $"Authorization header value (masked): {maskedAuth}");
 
                     log.Write(LoggingLevel.Info, null, $"Authorization header set: {client.DefaultRequestHeaders.Authorization != null}");
+
+                    foreach (var header in client.DefaultRequestHeaders)
+                    {
+                        log.Write(LoggingLevel.Info, null, $"Header: {header.Key} = {string.Join(", ", header.Value)}");
+                    }
+
+                    if (client.BaseAddress != null)
+                    {
+                        log.Write(LoggingLevel.Info, null, $"IPP request target URI: {client.BaseAddress}");
+                        log.Write(LoggingLevel.Info, null, $"IPP request target host: {client.BaseAddress.Host}");
+                    }
+                    else
+                    {
+                        log.Write(LoggingLevel.Info, null, "BaseAddress not set on IPP HTTP client.");
+                    }
 
                     log.Write(LoggingLevel.Info, null, "IPP HTTP client configuration completed successfully.");
                 }
