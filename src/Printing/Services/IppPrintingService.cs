@@ -93,32 +93,32 @@ namespace Linn.PrintService.Printing.Services
             using (var ms = new MemoryStream())
             {
                 // IPP header
-            ms.WriteByte(0x01); // major version
-            ms.WriteByte(0x00); // minor version
-            ms.WriteByte(0x00); // operation-id high
-            ms.WriteByte(0x02); // operation-id low (Print-Job)
-            ms.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(1)), 0, 4); // request-id
+                ms.WriteByte(0x01); // major version
+                ms.WriteByte(0x00); // minor version
+                ms.WriteByte(0x00); // operation-id high
+                ms.WriteByte(0x02); // operation-id low (Print-Job)
+                ms.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(1)), 0, 4); // request-id
 
-            // operation-attributes-tag
-            ms.WriteByte(0x01);
+                // operation-attributes-tag
+                ms.WriteByte(0x01);
 
-            var attrs = Array.Empty<byte>();
-            attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
-            attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
-            attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
-            attrs = this.AddAttr(attrs, 0x42, "job-name", jobName);
-            attrs = this.AddAttr(attrs, 0x49, "document-format", "application/octet-stream");
+                var attrs = Array.Empty<byte>();
+                attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
+                attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
+                attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
+                attrs = this.AddAttr(attrs, 0x42, "job-name", jobName);
+                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/octet-stream");
 
-            ms.Write(attrs, 0, attrs.Length);
+                ms.Write(attrs, 0, attrs.Length);
 
-            // end-of-attributes-tag
-            ms.WriteByte(0x03);
+                // end-of-attributes-tag
+                ms.WriteByte(0x03);
+                
+                // document bytes
+                ms.Write(documentBytes, 0, documentBytes.Length);
+                this.log.Info("IPP payload built successfully.");
 
-            // document bytes
-            ms.Write(documentBytes, 0, documentBytes.Length);
-            this.log.Info("IPP payload built successfully.");
-
-            return ms.ToArray();
+                return ms.ToArray();
             }
         }
 
@@ -127,20 +127,20 @@ namespace Linn.PrintService.Printing.Services
             this.log.Info($"Building status payload for printerUri={printerUri}");
             using (var ms = new MemoryStream())
             {
-            ms.WriteByte(0x01); // major version
-            ms.WriteByte(0x00); // minor version
-            ms.WriteByte(0x00); // op-id high
-            ms.WriteByte(0x0B); // Get-Printer-Attributes
-            ms.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(1)), 0, 4);
+                ms.WriteByte(0x01); // major version
+                ms.WriteByte(0x00); // minor version
+                ms.WriteByte(0x00); // op-id high
+                ms.WriteByte(0x0B); // Get-Printer-Attributes
+                ms.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(1)), 0, 4);
 
-            ms.WriteByte(0x01); // operation-attributes-tag
+                ms.WriteByte(0x01); // operation-attributes-tag
 
-            var attrs = Array.Empty<byte>();
-            attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
-            attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
-            attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
+                var attrs = Array.Empty<byte>();
+                attrs = this.AddAttr(attrs, 0x47, "attributes-charset", "utf-8");
+                attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
+                attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
 
-            ms.Write(attrs, 0, attrs.Length);
+                ms.Write(attrs, 0, attrs.Length);
 
                 ms.WriteByte(0x03); // end-of-attributes-tag
                 
