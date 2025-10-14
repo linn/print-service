@@ -39,8 +39,19 @@ namespace Linn.PrintService.Printing.Services
 
             try
             {
-                byte[] documentBytes = JsonSerializer.Deserialize<byte[]>(data)
-                                       ?? throw new IppPrintingException("Failed to decode document bytes");
+                byte[] documentBytes;
+
+                var decoded = JsonSerializer.Deserialize<byte[]>(data);
+                if (decoded != null)
+                {
+                    this.log.Info("Document bytes successfully decoded.");
+                    documentBytes = decoded;
+                }
+                else
+                {
+                    this.log.Error("Failed to decode document bytes.");
+                    throw new IppPrintingException("Failed to decode document bytes.");
+                }
 
                 var ippPayload = this.BuildPayload(printerUri, jobName, documentBytes);
                 var result = await this.SendIppRequest(printerUri, ippPayload);
