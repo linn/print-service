@@ -173,11 +173,6 @@ namespace Linn.PrintService.Printing.Services
 
             try
             {
-                if (this.httpClient.BaseAddress != null)
-                {
-                    this.log.Info($"HttpClient BaseAddress: {this.httpClient.BaseAddress}");
-                }
-
                 foreach (var header in this.httpClient.DefaultRequestHeaders)
                 {
                     this.log.Info($"HttpClient Header: {header.Key} = {string.Join(", ", header.Value)}");
