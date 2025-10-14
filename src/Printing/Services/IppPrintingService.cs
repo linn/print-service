@@ -3,7 +3,6 @@ namespace Linn.PrintService.Printing.Services
     using System.Net;
     using System.Text;
 
-    using Linn.Common.Configuration;
     using Linn.Common.Logging;
     using Linn.PrintService.Printing.Exceptions;
 
@@ -189,12 +188,6 @@ namespace Linn.PrintService.Printing.Services
                     ? authHeader.Substring(0, 8) + "...(truncated)"
                     : authHeader ?? "(null)";
                 this.log.Info($"Authorization header (masked): {maskedAuth}");
-
-                var username = ConfigurationManager.Configuration["PRINT_USERNAME"];
-                var password = ConfigurationManager.Configuration["PRINT_PASSWORD"];
-
-                this.log.Info($"PRINT_USERNAME: {username ?? "(null)"}");
-                this.log.Info($"PRINT_PASSWORD length: {password?.Length ?? 0}");
 
                 using (var content = new ByteArrayContent(ippPayload))
                 {
