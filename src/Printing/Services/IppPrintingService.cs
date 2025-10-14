@@ -2,8 +2,6 @@ namespace Linn.PrintService.Printing.Services
 {
     using System.Net;
     using System.Text;
-    using System.Text.Json;
-
     using Linn.Common.Logging;
     using Linn.PrintService.Printing.Exceptions;
 
@@ -39,21 +37,7 @@ namespace Linn.PrintService.Printing.Services
 
             try
             {
-                byte[] documentBytes;
-
-                var decoded = JsonSerializer.Deserialize<byte[]>(data);
-                if (decoded != null)
-                {
-                    this.log.Info("Document bytes successfully decoded.");
-                    documentBytes = decoded;
-                }
-                else
-                {
-                    this.log.Error("Failed to decode document bytes.");
-                    throw new IppPrintingException("Failed to decode document bytes.");
-                }
-
-                var ippPayload = this.BuildPayload(printerUri, jobName, documentBytes);
+                var ippPayload = this.BuildPayload(printerUri, jobName, data);
                 var result = await this.SendIppRequest(printerUri, ippPayload);
 
                 this.log.Info($"Print completed: printerUri={printerUri}, "
@@ -124,7 +108,7 @@ namespace Linn.PrintService.Printing.Services
 
                 // end-of-attributes-tag
                 ms.WriteByte(0x03);
-                
+
                 // document bytes
                 ms.Write(documentBytes, 0, documentBytes.Length);
                 this.log.Info("IPP payload built successfully.");
