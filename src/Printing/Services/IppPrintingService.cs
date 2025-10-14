@@ -2,6 +2,7 @@ namespace Linn.PrintService.Printing.Services
 {
     using System.Net;
     using System.Text;
+
     using Linn.Common.Logging;
     using Linn.PrintService.Printing.Exceptions;
 
@@ -169,14 +170,31 @@ namespace Linn.PrintService.Printing.Services
         private async Task<PrintResult> SendIppRequest(string uri, byte[] ippPayload)
         {
             this.log.Info($"Sending IPP request to {uri} with payload length {ippPayload?.Length ?? 0}");
+
             try
             {
+                foreach (var header in this.httpClient.DefaultRequestHeaders)
+                {
+                    this.log.Info($"HttpClient Header: {header.Key} = {string.Join(", ", header.Value)}");
+                }
+
+                var authHeader = this.httpClient.DefaultRequestHeaders.Authorization?.Parameter;
+                var maskedAuth = authHeader != null && authHeader.Length > 8
+                    ? authHeader.Substring(0, 8) + "...(truncated)"
+                    : authHeader ?? "(null)";
+                this.log.Info($"Authorization header (masked): {maskedAuth}");
+
                 using (var content = new ByteArrayContent(ippPayload))
                 {
                     content.Headers.ContentType =
                         new System.Net.Http.Headers.MediaTypeHeaderValue("application/ipp");
 
+                    this.log.Info("Sending HTTP POST request...");
+
                     var response = await this.httpClient.PostAsync(uri, content);
+
+                    this.log.Info($"IPP response received. Status: {(int)response.StatusCode} {response.ReasonPhrase}");
+
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
 
                     return new PrintResult
