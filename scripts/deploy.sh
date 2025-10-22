@@ -7,9 +7,30 @@ unzip -q awscliv2.zip
 sudo ./aws/install >/dev/null 2>&1
 echo "AWS CLI installed."
 
+# Determine CI environment and set variables accordingly
+if [ -n "$TRAVIS_BRANCH" ]; then
+  # Travis CI
+  BRANCH=$TRAVIS_BRANCH
+  IS_PR=$TRAVIS_PULL_REQUEST
+  BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+elif [ -n "$GITHUB_ACTIONS" ]; then
+  # GitHub Actions
+  if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+    BRANCH=$GITHUB_BASE_REF
+    IS_PR="true"
+  else
+    BRANCH=$GITHUB_REF_NAME
+    IS_PR="false"
+  fi
+  BUILD_NUMBER=$GITHUB_RUN_NUMBER
+else
+  echo "Unknown CI environment"
+  exit 1
+fi
+
 # deploy on aws
-if [ "${TRAVIS_BRANCH}" = "main" ]; then
-  if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+if [ "${BRANCH}" = "main" ]; then
+  if [ "${IS_PR}" = "false" ]; then
     # master - deploy to production
     echo deploy to production
 
@@ -37,6 +58,6 @@ fi
 source ./secrets.env > /dev/null 2>&1
 
 # deploy the service to amazon
-aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$TRAVIS_BUILD_NUMBER printUsername=$PRINT_USERNAME printPassword=$PRINT_PASSWORD loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
+aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$BUILD_NUMBER printUsername=$PRINT_USERNAME printPassword=$PRINT_PASSWORD loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
 
 echo "deploy complete"
