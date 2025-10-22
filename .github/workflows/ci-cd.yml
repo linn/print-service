@@ -12,10 +12,6 @@ jobs:
   build-test-deploy:
     runs-on: ubuntu-24.04
     
-    services:
-      docker:
-        options: --privileged
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,8 +25,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: './src/Service.Host/package-lock.json'
 
       - name: Cache node modules
         uses: actions/cache@v4
@@ -44,6 +38,8 @@ jobs:
         run: chmod +x ./scripts/*.sh
 
       - name: Install dependencies
+        env:
+          CI: true
         run: ./scripts/install.sh
 
       - name: Run tests
