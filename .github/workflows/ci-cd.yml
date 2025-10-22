@@ -1,0 +1,68 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-24.04
+    
+    services:
+      docker:
+        options: --privileged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: './src/Service.Host/package-lock.json'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ./src/Service.Host/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Make scripts executable
+        run: chmod +x ./scripts/*.sh
+
+      - name: Install dependencies
+        run: ./scripts/install.sh
+
+      - name: Run tests
+        run: ./scripts/test.sh
+
+      - name: Build and package
+        if: success()
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: ./scripts/package.sh
+
+      - name: Deploy to AWS
+        if: success()
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: ./scripts/deploy.sh
