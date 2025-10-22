@@ -12,6 +12,7 @@ namespace Linn.PrintService.Service.Host
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.JsonWebTokens;
 
     public class Startup
@@ -25,6 +26,14 @@ namespace Linn.PrintService.Service.Host
 
             services.AddCredentialsExtensions();
             services.AddSqsExtensions();
+            services.AddLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    builder.AddConsole();
+                    builder.AddFilter("Microsoft", LogLevel.Warning);
+                    builder.AddFilter("System", LogLevel.Warning);
+                    builder.AddFilter("Linn", LogLevel.Information);
+                });
             services.AddLog();
 
             services.AddServices();
