@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <AssemblyName>Linn.PrintService.Messaging</AssemblyName>
+	  <RootNamespace>Linn.PrintService.Messaging</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
+    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Printing\Printing.csproj" />
+	</ItemGroup>
+
+</Project>

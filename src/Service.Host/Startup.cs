@@ -20,7 +20,7 @@ namespace Linn.PrintService.Service.Host
         public void ConfigureServices(IServiceCollection services)
         {
             JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            
+
             services.AddCors();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
@@ -37,6 +37,9 @@ namespace Linn.PrintService.Service.Host
             services.AddLog();
 
             services.AddServices();
+            services.AddMessaging();
+            services.AddHostedService<RabbitChannelInitializer>();
+
             services.AddAuthorization();
 
             // we need this line for reflection to work in the modules

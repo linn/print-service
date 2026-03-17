@@ -82,8 +82,3 @@ src/Service.Host/Service.Host.sln
 *.DS_Store
 
 .idea*
-
-/src/Messaging.Debug/appsettings.Development.json
-/src/Messaging.Debug/appsettings.json
-/src/Messaging.Debug/config-example.env
-/src/Messaging.Debug/Properties/launchSettings.json

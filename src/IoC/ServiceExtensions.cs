@@ -4,6 +4,8 @@
     using System.Text;
 
     using Linn.Common.Configuration;
+    using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Handlers;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
 
@@ -31,6 +33,27 @@
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
                 });
+
+            return services;
+        }
+
+        public static IServiceCollection AddMessaging(this IServiceCollection services)
+        {
+            services.AddSingleton(sp =>
+                new RabbitChannelConfiguration(
+                    queueName: "print.queue",
+                    routingKeys: new[] { "print.job" },
+                    exchangeName: "print.exchange",
+                    durableExchange: true
+                ));
+
+            services.AddSingleton<RabbitPublisher>(sp =>
+                {
+                    var config = sp.GetRequiredService<RabbitChannelConfiguration>();
+                    return new RabbitPublisher(config.ProducerChannel!, config.Exchange!);
+                });
+
+            services.AddSingleton<IMessageHandler, PrintJobMessageHandler>();
 
             return services;
         }

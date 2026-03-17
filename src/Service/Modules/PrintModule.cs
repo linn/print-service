@@ -2,10 +2,13 @@ namespace Linn.PrintService.Service.Modules
 {
     using System.IO;
     using System.Threading.Tasks;
+
     using Linn.Common.Service;
+    using Linn.PrintService.Messaging.Publishers;
     using Linn.PrintService.Printing;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
@@ -24,7 +27,7 @@ namespace Linn.PrintService.Service.Modules
             HttpResponse res,
             string printerUri,
             string jobName,
-            IIppPrintingService printingService)
+            PrintJobPublisher publisher)
         {
             byte[] data;
             using (var ms = new MemoryStream())
@@ -33,20 +36,10 @@ namespace Linn.PrintService.Service.Modules
                 data = ms.ToArray();
             }
 
-            PrintResult result;
+            await publisher.PublishAsync(data, printerUri, jobName);
 
-            try
-            {
-                result = await printingService.Print(printerUri, jobName, data);
-            }
-            catch (IppPrintingException e)
-            {
-                res.StatusCode = StatusCodes.Status400BadRequest;
-                await res.WriteAsJsonAsync(new { Error = "Printing Error", Message = e.Message });
-                return;
-            }
-
-            await res.WriteAsJsonAsync(result);
+            res.StatusCode = StatusCodes.Status202Accepted;
+            await res.WriteAsJsonAsync(new { Status = "Queued" });
         }
 
         private async Task DetailedStatus(
