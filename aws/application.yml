@@ -32,7 +32,18 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Name of production cluster
     Default: ProductionClusterName
-
+      rabbitServer:
+    Type: String
+    Description: Rabbit server
+  rabbitPort:
+    Type: Number
+    Description: Rabbit port
+  rabbitUsername:
+    Type: String
+    Description: Rabbit username
+  rabbitPassword:
+    Type: String
+    Description: Rabbit password
 Conditions:
   isTesting: !Or
     - !Equals [!Ref environmentSuffix, "-int"]
@@ -146,6 +157,14 @@ Resources:
               Value:
                 Fn::ImportValue:
                   !Sub "kms-key-alias${environmentSuffix}"
+            - Name: RABBIT_SERVER
+              Value: !Ref rabbitServer
+            - Name: RABBIT_PORT
+              Value: !Ref rabbitPort
+            - Name: RABBIT_USERNAME
+              Value: !Ref rabbitUsername
+            - Name: RABBIT_PASSWORD
+              Value: !Ref rabbitPassword
           DockerLabels:
             traefik.enable: "true"
             traefik.http.routers.printservice.entrypoints: "web"

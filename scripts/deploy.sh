@@ -29,6 +29,10 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
     APP_ROOT=http://app-sys.linn.co.uk
     PROXY_ROOT=http://app.linn.co.uk
     ENV_SUFFIX=-sys
+    rabbitServer=$RABBIT_SERVER \
+    rabbitUsername=$RABBIT_USERNAME \
+    rabbitPassword=$RABBIT_PASSWORD \
+    rabbitPort=$RABBIT_PORT \
   fi
 fi
 
