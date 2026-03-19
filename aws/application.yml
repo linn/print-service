@@ -32,7 +32,7 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Name of production cluster
     Default: ProductionClusterName
-      rabbitServer:
+  rabbitServer:
     Type: String
     Description: Rabbit server
   rabbitPort:

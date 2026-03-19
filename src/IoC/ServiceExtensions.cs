@@ -5,7 +5,6 @@
 
     using Linn.Common.Configuration;
     using Linn.Common.Messaging.RabbitMQ;
-    using Linn.PrintService.Messaging.Handlers;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
 
@@ -52,8 +51,6 @@
                     var config = sp.GetRequiredService<RabbitChannelConfiguration>();
                     return new RabbitPublisher(config.ProducerChannel!, config.Exchange!);
                 });
-
-            services.AddSingleton<IMessageHandler, PrintJobMessageHandler>();
 
             return services;
         }
