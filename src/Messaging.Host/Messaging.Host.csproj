@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	  <AssemblyName>Linn.PrintService.Messaging.Host</AssemblyName>
+	  <RootNamespace>Linn.PrintService.Messaging.Host</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Messaging.Host-d1906e04-a707-4060-98eb-d69040535d87</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Printing\Printing.csproj" />
+  </ItemGroup>
+</Project>
