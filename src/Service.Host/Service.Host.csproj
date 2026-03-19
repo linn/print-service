@@ -25,7 +25,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\IoC\IoC.csproj" />
-		<ProjectReference Include="..\Messaging.Host\Messaging.Host.csproj" />
 		<ProjectReference Include="..\Service\Service.csproj" />
 	</ItemGroup>
 </Project>

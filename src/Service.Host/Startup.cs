@@ -1,12 +1,10 @@
 namespace Linn.PrintService.Service.Host
 {
     using Linn.Common.Logging;
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.Common.Service;
     using Linn.Common.Service.Extensions;
     using Linn.PrintService.IoC;
-    using Linn.PrintService.Messaging.Host;
-    using Linn.PrintService.Messaging.Host.Handlers;
+
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Service.Models;
 
@@ -40,12 +38,6 @@ namespace Linn.PrintService.Service.Host
             services.AddLog();
 
             services.AddServices();
-            services.AddMessaging();
-
-            services.AddHostedService<RabbitChannelInitializer>();
-
-            services.AddHostedService<Worker>();
-            services.AddSingleton<IMessageHandler, PrintJobMessageHandler>();
 
             services.AddAuthorization();
 

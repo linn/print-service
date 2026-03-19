@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Printing\Printing.csproj" />
+	  <ProjectReference Include="..\Printing\Printing.csproj" />
+	  <ProjectReference Include="..\IoC\IoC.csproj" />
   </ItemGroup>
 </Project>
