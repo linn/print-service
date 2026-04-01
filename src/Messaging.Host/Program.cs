@@ -25,7 +25,7 @@ builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
 
 builder.Services.AddSingleton<IMessageHandler, PrintJobMessageHandler>();
 
-builder.Services.AddHostedService<RabbitChannelInitializer>();
+builder.Services.AddHostedService<RabbitChannelInitializer>();      
 
 builder.Services.AddHostedService<Worker>();
 
