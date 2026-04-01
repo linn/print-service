@@ -6,6 +6,7 @@ using Linn.PrintService.Messaging.Host.Handlers;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddServices();
+builder.Services.AddLog();
 
 builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
     {

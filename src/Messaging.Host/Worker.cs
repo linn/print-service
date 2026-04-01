@@ -1,39 +1,43 @@
 namespace Linn.PrintService.Messaging.Host
 {
     using Linn.Common.Messaging.RabbitMQ;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
 
     public class Worker : BackgroundService
     {
-        private readonly RabbitChannelConfiguration channelConfig;
+        private readonly RabbitChannelConfiguration config;
         private readonly IEnumerable<IMessageHandler> handlers;
+        private readonly ILogger<Worker> logger;
 
         public Worker(
-            RabbitChannelConfiguration channelConfig,
-            IEnumerable<IMessageHandler> handlers)
+            RabbitChannelConfiguration config,
+            IEnumerable<IMessageHandler> handlers,
+            ILogger<Worker> logger)
         {
-            this.channelConfig = channelConfig;
+            this.config = config;
             this.handlers = handlers;
+            this.logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine($"[Worker] Starting... Queue={this.channelConfig.QueueName}");
+            this.logger.LogInformation("Worker : Starting... Queue={Queue}", this.config.QueueName);
 
-            var channel = this.channelConfig.ConsumerChannel;
-            var queueName = this.channelConfig.QueueName;
-
-            if (channel == null)
+            while (this.config.ConsumerChannel == null && !stoppingToken.IsCancellationRequested)
             {
-                Console.WriteLine("[Worker] ConsumerChannel not initialized!");
-                throw new Exception("ConsumerChannel not initialized");
+                this.logger.LogInformation("[Worker : Waiting for ConsumerChannel...");
+                await Task.Delay(200, stoppingToken);
             }
 
+            var channel = this.config.ConsumerChannel;
             var router = new RabbitMessageRouter(channel, this.handlers);
             var consumer = router.CreateConsumer(stoppingToken);
 
-            Console.WriteLine("[Worker] Subscribing to queue...");
+            this.logger.LogInformation("[Worker] Subscribing to queue...");
+
             await channel.BasicConsumeAsync(
-                queue: queueName,
+                queue: this.config.QueueName,
                 autoAck: false,
                 consumerTag: string.Empty,
                 noLocal: false,
@@ -42,7 +46,7 @@ namespace Linn.PrintService.Messaging.Host
                 consumer: consumer,
                 cancellationToken: stoppingToken);
 
-            Console.WriteLine("[Worker] Print worker running. Waiting for messages...");
+            this.logger.LogInformation("[Worker] Running");
 
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
