@@ -1,5 +1,7 @@
 ﻿namespace Linn.PrintService.Messaging.Host.Handlers
 {
+    using System.Text;
+
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
@@ -33,8 +35,8 @@
                     return;
                 }
 
-                var printerUri = printerUriObj?.ToString() ?? throw new Exception("printerUri empty");
-                var jobName = jobNameObj?.ToString() ?? "PrintJob";
+                var printerUri = Encoding.UTF8.GetString((byte[])printerUriObj);
+                var jobName = Encoding.UTF8.GetString((byte[])jobNameObj) ?? "PrintJob";
                 var data = message.Body.ToArray();
 
                 Console.WriteLine($"[Handler] Processing print job: {jobName} for {printerUri}, {data.Length} bytes");
