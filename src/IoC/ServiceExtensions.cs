@@ -4,7 +4,6 @@
     using System.Text;
 
     using Linn.Common.Configuration;
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
 

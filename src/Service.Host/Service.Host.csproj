@@ -19,7 +19,6 @@
 	<ItemGroup>
 		<PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
 		<PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
-		<PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.0" />
 		<PackageReference Include="Linn.Common.Rendering" Version="1.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
 	</ItemGroup>

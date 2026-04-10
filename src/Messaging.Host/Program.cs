@@ -11,9 +11,9 @@ builder.Services.AddLog();
 builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
     {
         var config = new RabbitChannelConfiguration(
-            queueName: "print.queue",               
+            queueName: "print",               
             routingKeys: new[] { "print.job" },     
-            exchangeName: "print.exchange",         
+            exchangeName: "print",
             durableExchange: true,
             createConsumerChannel: true,
             createProducerChannel: false
