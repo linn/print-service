@@ -11,19 +11,12 @@ Parameters:
   printPassword:
     Type: String
     Description: print password
-  loggingEnvironment:
-    Type: String
-    Description: Logging Environment
-  loggingMaxInnerExceptionDepth:
-    Type: Number
-    Description: Logging Max Inner Exception Depth
   environmentSuffix:
     Type: String
     AllowedValues:
       - ''
-      - -int
       - -sys
-    Description: Environment suffix e.g -int -sys
+    Description: Environment suffix e.g-sys
   TestClusterName:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Name of test cluster
@@ -32,11 +25,20 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: Name of production cluster
     Default: ProductionClusterName
-
+  rabbitServer:
+    Type: String
+    Description: Rabbit server
+  rabbitPort:
+    Type: Number
+    Description: Rabbit port
+  rabbitUsername:
+    Type: String
+    Description: Rabbit username
+  rabbitPassword:
+    Type: String
+    Description: Rabbit password
 Conditions:
-  isTesting: !Or
-    - !Equals [!Ref environmentSuffix, "-int"]
-    - !Equals [!Ref environmentSuffix, "-sys"]
+  isTesting: !Equals [!Ref environmentSuffix, "-sys"]
 
 Resources:
   printServiceRole:
@@ -130,12 +132,6 @@ Resources:
               Value: !Ref printUsername
             - Name: PRINT_PASSWORD
               Value: !Ref printPassword
-            - Name: LOG_AMAZON_SQSQUEUEURI
-              Value: !ImportValue logging-queue-url
-            - Name: LOG_ENVIRONMENT
-              Value: !Ref loggingEnvironment
-            - Name: LOG_MAX_INNER_EXCEPTION_DEPTH
-              Value: !Ref loggingMaxInnerExceptionDepth
             - Name: awsRegion
               Value: !Ref AWS::Region
             - Name: KEYS_BUCKET_NAME
@@ -167,3 +163,57 @@ Resources:
         - Field: instanceId
           Type: spread
       TaskDefinition: !Ref printServiceTaskDefinition
+
+  messagingTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Tags:
+        - Key: "Project"
+          Value: "printService"
+        - Key: "CIT"
+          Value: "IT"
+        - Key: AppManagerCFNStackKey
+          Value: !Sub ${AWS::StackId}
+      TaskRoleArn: !GetAtt printServiceRole.Arn
+      ContainerDefinitions:
+        - Name: printServiceMessaging
+          Cpu: '1'
+          Essential: 'true'
+          Image: !Sub docker.io/linn/print-service-messaging:${dockerTag}
+          Memory: '250'
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: !Ref AWS::Region
+              awslogs-group: !Ref StackLogGroup
+              awslogs-stream-prefix: !Sub ${AWS::StackName}-messaging
+          Environment:
+            - Name: PRINT_USERNAME
+              Value: !Ref printUsername
+            - Name: PRINT_PASSWORD
+              Value: !Ref printPassword
+            - Name: awsRegion
+              Value: !Ref AWS::Region
+            - Name: RABBIT_SERVER
+              Value: !Ref rabbitServer
+            - Name: RABBIT_PORT
+              Value: !Ref rabbitPort
+            - Name: RABBIT_USERNAME
+              Value: !Ref rabbitUsername
+            - Name: RABBIT_PASSWORD
+              Value: !Ref rabbitPassword
+
+  messagingService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !If
+        - isTesting
+        - !Sub ${TestClusterName}
+        - !Sub ${ProductionClusterName}
+      DesiredCount: 1
+      PlacementStrategies:
+        - Field: attribute:ecs.availability-zone
+          Type: spread
+        - Field: instanceId
+          Type: spread
+      TaskDefinition: !Ref messagingTaskDefinition

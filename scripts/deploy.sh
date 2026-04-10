@@ -37,6 +37,18 @@ fi
 source ./secrets.env > /dev/null 2>&1
 
 # deploy the service to amazon
-aws cloudformation deploy --stack-name $STACK_NAME --template-file ./aws/application.yml --parameter-overrides dockerTag=$TRAVIS_BUILD_NUMBER printUsername=$PRINT_USERNAME printPassword=$PRINT_PASSWORD loggingEnvironment=$LOG_ENVIRONMENT loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH environmentSuffix=$ENV_SUFFIX --capabilities=CAPABILITY_IAM
+aws cloudformation deploy \
+--stack-name $STACK_NAME \
+--template-file ./aws/application.yml \
+--parameter-overrides \
+dockerTag=$TRAVIS_BUILD_NUMBER \
+printUsername=$PRINT_USERNAME \
+printPassword=$PRINT_PASSWORD \
+environmentSuffix=$ENV_SUFFIX \
+rabbitServer=$RABBIT_SERVER \
+rabbitUsername=$RABBIT_USERNAME \
+rabbitPassword=$RABBIT_PASSWORD \
+rabbitPort=$RABBIT_PORT \
+--capabilities=CAPABILITY_IAM
 
 echo "deploy complete"

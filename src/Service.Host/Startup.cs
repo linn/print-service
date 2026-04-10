@@ -4,6 +4,7 @@ namespace Linn.PrintService.Service.Host
     using Linn.Common.Service;
     using Linn.Common.Service.Extensions;
     using Linn.PrintService.IoC;
+
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Service.Models;
 
@@ -20,7 +21,7 @@ namespace Linn.PrintService.Service.Host
         public void ConfigureServices(IServiceCollection services)
         {
             JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            
+
             services.AddCors();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
@@ -37,6 +38,7 @@ namespace Linn.PrintService.Service.Host
             services.AddLog();
 
             services.AddServices();
+
             services.AddAuthorization();
 
             // we need this line for reflection to work in the modules
