@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.0" />
+    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.13" />
   </ItemGroup>
 

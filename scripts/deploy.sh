@@ -44,8 +44,6 @@ aws cloudformation deploy \
 dockerTag=$TRAVIS_BUILD_NUMBER \
 printUsername=$PRINT_USERNAME \
 printPassword=$PRINT_PASSWORD \
-loggingEnvironment=$LOG_ENVIRONMENT \
-loggingMaxInnerExceptionDepth=$LOG_MAX_INNER_EXCEPTION_DEPTH \
 environmentSuffix=$ENV_SUFFIX \
 rabbitServer=$RABBIT_SERVER \
 rabbitUsername=$RABBIT_USERNAME \

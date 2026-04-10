@@ -11,12 +11,6 @@ Parameters:
   printPassword:
     Type: String
     Description: print password
-  loggingEnvironment:
-    Type: String
-    Description: Logging Environment
-  loggingMaxInnerExceptionDepth:
-    Type: Number
-    Description: Logging Max Inner Exception Depth
   environmentSuffix:
     Type: String
     AllowedValues:
@@ -138,12 +132,6 @@ Resources:
               Value: !Ref printUsername
             - Name: PRINT_PASSWORD
               Value: !Ref printPassword
-            - Name: LOG_AMAZON_SQSQUEUEURI
-              Value: !ImportValue logging-queue-url
-            - Name: LOG_ENVIRONMENT
-              Value: !Ref loggingEnvironment
-            - Name: LOG_MAX_INNER_EXCEPTION_DEPTH
-              Value: !Ref loggingMaxInnerExceptionDepth
             - Name: awsRegion
               Value: !Ref AWS::Region
             - Name: KEYS_BUCKET_NAME
@@ -204,12 +192,6 @@ Resources:
               Value: !Ref printUsername
             - Name: PRINT_PASSWORD
               Value: !Ref printPassword
-            - Name: LOG_AMAZON_SQSQUEUEURI
-              Value: !ImportValue logging-queue-url
-            - Name: LOG_ENVIRONMENT
-              Value: !Ref loggingEnvironment
-            - Name: LOG_MAX_INNER_EXCEPTION_DEPTH
-              Value: !Ref loggingMaxInnerExceptionDepth
             - Name: awsRegion
               Value: !Ref AWS::Region
             - Name: RABBIT_SERVER
