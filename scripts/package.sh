@@ -2,8 +2,8 @@
 set -ev
 
 # build dotnet application
-dotnet publish ./src/Service.Host/ -c release
-dotnet publish ./src/Messaging.Host/ -c release
+dotnet publish ./src/Service.Host/ -c Release
+dotnet publish ./src/Messaging.Host/ -c Release
 
 # determine which branch this change is from
 if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
