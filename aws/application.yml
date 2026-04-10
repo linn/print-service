@@ -44,8 +44,7 @@ Parameters:
     Type: String
     Description: Rabbit password
 Conditions:
-  isTesting: !Or
-    - !Equals [!Ref environmentSuffix, "-sys"]
+  isTesting: !Equals [!Ref environmentSuffix, "-sys"]
 
 Resources:
   printServiceRole:
