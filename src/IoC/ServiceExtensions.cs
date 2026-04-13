@@ -4,8 +4,10 @@
     using System.Text;
 
     using Linn.Common.Configuration;
+    using Linn.Common.Proxy;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;
 
@@ -32,7 +34,15 @@
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
                 });
 
-            return services;
+            services.AddHttpClient<IRestClient, RestClient>(client =>
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/json"));
+                });
+
+            return services
+                .AddTransient<IRsnPrintProxy, RsnPrintProxy>();
         }
     }
 }
