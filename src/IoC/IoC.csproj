@@ -14,7 +14,6 @@
     <PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Proxy" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>

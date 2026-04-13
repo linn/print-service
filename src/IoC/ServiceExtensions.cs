@@ -42,7 +42,7 @@
                 });
 
             return services
-                .AddTransient<IRsnPrintProxy, RsnPrintProxy>();
+                .AddSingleton<IRsnPrintProxy, RsnPrintProxy>();
         }
     }
 }

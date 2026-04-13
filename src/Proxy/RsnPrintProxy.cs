@@ -30,9 +30,7 @@ namespace Linn.PrintService.Proxy
                                new Dictionary<string, string>(),
                                new Dictionary<string, string[]>());
 
-            return response.Value
-                   ?? throw new InvalidOperationException(
-                       $"Empty response when fetching RSN {rsnNumber} PDF");
+            return response.Value;
         }
     }
 }
