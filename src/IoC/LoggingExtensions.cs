@@ -4,7 +4,7 @@
 
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class LoggingExtensionsW
+    public static class LoggingExtensions
     {
         public static IServiceCollection AddLog(this IServiceCollection services)
         {
