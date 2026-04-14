@@ -57,6 +57,12 @@ namespace Linn.PrintService.Messaging.Host.Handlers
                     copyType,
                     facilityCode);
 
+                if (data == null || data.Length == 0)
+                {
+                    throw new IppPrintingException(
+                        $"No PDF data returned for RSN {rsnNumber}");
+                }
+
                 this.log.Info(
                     $"[PrintRsnDocument] Received {data.Length} bytes, printing to {printerUri}");
 

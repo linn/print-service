@@ -12,11 +12,13 @@ namespace Linn.PrintService.Proxy
     public class RsnPrintProxy : IRsnPrintProxy
     {
         private readonly IRestClient restClient;
-        private readonly string baseUri = ConfigurationManager.Configuration["PROXY_ROOT"]!;
+        private readonly string baseUri;
 
         public RsnPrintProxy(IRestClient restClient)
         {
             this.restClient = restClient;
+            this.baseUri = ConfigurationManager.Configuration["PROXY_ROOT"]
+                           ?? throw new InvalidOperationException("PROXY_ROOT is not configured");
         }
 
         public async Task<byte[]> GetRsnPrintAsPdf(int rsnNumber, string copyType, string facilityCode)
