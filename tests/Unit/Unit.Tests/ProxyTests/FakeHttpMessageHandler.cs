@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Integration.Tests.ProxyTests
+namespace Linn.PrintService.Unit.Tests.ProxyTests
 {
     using System.Net;
     using System.Net.Http;
