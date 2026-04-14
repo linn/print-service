@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
-    <PackageReference Include="Linn.Common.Proxy" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.14" />
   </ItemGroup>
 
   <ItemGroup>

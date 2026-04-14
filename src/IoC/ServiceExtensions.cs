@@ -4,7 +4,6 @@
     using System.Text;
 
     using Linn.Common.Configuration;
-    using Linn.Common.Proxy;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
     using Linn.PrintService.Proxy;
@@ -34,11 +33,11 @@
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
                 });
 
-            services.AddHttpClient<IRestClient, RestClient>(client =>
+            services.AddHttpClient("RsnPdfProxy", client =>
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(
-                        new MediaTypeWithQualityHeaderValue("application/json"));
+                        new MediaTypeWithQualityHeaderValue("application/pdf"));
                 });
 
             return services
