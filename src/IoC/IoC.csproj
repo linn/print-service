@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Printing\Printing.csproj" />
+    <ProjectReference Include="..\Proxy\Proxy.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 

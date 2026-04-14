@@ -6,6 +6,7 @@
     using Linn.Common.Configuration;
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +31,13 @@
 
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
+                });
+
+            services.AddHttpClient<IRsnPrintProxy, RsnPrintProxy>(client =>
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/pdf"));
                 });
 
             return services;
