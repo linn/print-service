@@ -33,15 +33,14 @@
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
                 });
 
-            services.AddHttpClient("RsnPdfProxy", client =>
+            services.AddHttpClient<IRsnPrintProxy, RsnPrintProxy>(client =>
                 {
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/pdf"));
                 });
 
-            return services
-                .AddSingleton<IRsnPrintProxy, RsnPrintProxy>();
+            return services;
         }
     }
 }

@@ -1,10 +1,9 @@
 namespace Linn.PrintService.Messaging.Host.Handlers
 {
-    using System.Text;
-
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
-    using Linn.PrintService.Printing.Exceptions;
+    using Linn.PrintService.Messaging.Host.Exceptions;
+    using Linn.PrintService.Messaging.Host.Extensions;
     using Linn.PrintService.Printing.Services;
 
     public class PrintRsnDocumentMessageHandler : IMessageHandler
@@ -29,61 +28,45 @@ namespace Linn.PrintService.Messaging.Host.Handlers
         {
             this.log.Info("[PrintRsnDocument] Received a message");
 
-            try
+            if (!message.TryGetHeaderAsString("rsnNumber", out var rsnNumber)
+                || !message.TryGetHeaderAsString("copyType", out var copyType)
+                || !message.TryGetHeaderAsString("facilityCode", out var facilityCode)
+                || !message.TryGetHeaderAsString("printerUri", out var printerUri))
             {
-                if (!message.Headers.TryGetValue("rsnNumber", out var rsnNumberObj)
-                    || !message.Headers.TryGetValue("copyType", out var copyTypeObj)
-                    || !message.Headers.TryGetValue("facilityCode", out var facilityCodeObj)
-                    || !message.Headers.TryGetValue("printerUri", out var printerUriObj))
-                {
-                    throw new IppPrintingException(
-                        "Missing required header: rsnNumber, copyType, facilityCode, or printerUri");
-                }
-
-                var rsnNumber = Encoding.UTF8.GetString((byte[])rsnNumberObj);
-                var copyType = Encoding.UTF8.GetString((byte[])copyTypeObj);
-                var facilityCode = Encoding.UTF8.GetString((byte[])facilityCodeObj);
-                var printerUri = Encoding.UTF8.GetString((byte[])printerUriObj);
-
-                if (!int.TryParse(rsnNumber, out var parsedRsnNumber))
-                {
-                    throw new IppPrintingException(
-                        $"Invalid rsnNumber header value: '{rsnNumber}' is not a valid integer");
-                }
-
-                var jobName = message.Headers.TryGetValue("jobName", out var jobNameObj)
-                    ? Encoding.UTF8.GetString((byte[])jobNameObj)
-                    : $"RSN{rsnNumber}";
-
-                this.log.Info(
-                    $"[PrintRsnDocument] Fetching PDF for RSN {rsnNumber}, copyType={copyType}, facilityCode={facilityCode}");
-
-                var data = await this.rsnPrintProxy.GetRsnPrintAsPdf(
-                    parsedRsnNumber,
-                    copyType,
-                    facilityCode);
-
-                if (data == null || data.Length == 0)
-                {
-                    throw new IppPrintingException(
-                        $"No PDF data returned for RSN {rsnNumber}");
-                }
-
-                this.log.Info(
-                    $"[PrintRsnDocument] Received {data.Length} bytes, printing to {printerUri}");
-
-                await this.printingService.Print(printerUri, jobName, data);
-
-                this.log.Info($"[PrintRsnDocument] Print job completed: {jobName}");
+                throw new RsnPrintMessageException(
+                    "Missing required header: rsnNumber, copyType, facilityCode, or printerUri");
             }
-            catch (IppPrintingException ex)
+
+            if (!int.TryParse(rsnNumber, out var parsedRsnNumber))
             {
-                this.log.Error($"[PrintRsnDocument] IPP printing failed: {ex.Message}", ex);
+                throw new RsnPrintMessageException(
+                    $"Invalid rsnNumber header value: '{rsnNumber}' is not a valid integer");
             }
-            catch (Exception ex)
+
+            var jobName = message.TryGetHeaderAsString("jobName", out var jobNameValue)
+                ? jobNameValue
+                : $"RSN{rsnNumber}";
+
+            this.log.Info(
+                $"[PrintRsnDocument] Fetching PDF for RSN {rsnNumber}, copyType={copyType}, facilityCode={facilityCode}");
+
+            var data = await this.rsnPrintProxy.GetRsnAsPdf(
+                parsedRsnNumber,
+                copyType,
+                facilityCode);
+
+            if (data == null || data.Length == 0)
             {
-                this.log.Error($"[PrintRsnDocument] Handler exception: {ex.Message}", ex);
+                throw new RsnPrintMessageException(
+                    $"No PDF data returned for RSN {rsnNumber}");
             }
+
+            this.log.Info(
+                $"[PrintRsnDocument] Received {data.Length} bytes, printing to {printerUri}");
+
+            await this.printingService.Print(printerUri, jobName, data);
+
+            this.log.Info($"[PrintRsnDocument] Print job completed: {jobName}");
         }
     }
 }

@@ -20,8 +20,8 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
 
             this.HttpHandler = new FakeHttpMessageHandler();
 
-            var factory = new FakeHttpClientFactory(this.HttpHandler);
-            this.Sut = new RsnPrintProxy(factory);
+            var client = new HttpClient(this.HttpHandler);
+            this.Sut = new RsnPrintProxy(client);
         }
 
         [TearDown]

@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
     using System;
     using System.Collections.Generic;
@@ -12,27 +12,19 @@ namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandl
 
     using NUnit.Framework;
 
-    public class WhenHandlingRsnDocumentMessageWithMissingHeaders : ContextBase
+    public class WhenHandlingPrintJobMessageWithMissingHeaders : ContextBase
     {
         [SetUp]
         public async Task SetUp()
         {
             var message = new Message
                               {
-                                  RoutingKey = "print.rsn.document",
+                                  RoutingKey = "print.job",
+                                  Body = new byte[] { 1, 2, 3 },
                                   Headers = new Dictionary<string, object>()
                               };
 
             await this.Handler.HandleAsync(message, CancellationToken.None);
-        }
-
-        [Test]
-        public void ShouldNotCallProxy()
-        {
-            this.RsnPrintProxy.DidNotReceive().GetRsnPrintAsPdf(
-                Arg.Any<int>(),
-                Arg.Any<string>(),
-                Arg.Any<string>());
         }
 
         [Test]

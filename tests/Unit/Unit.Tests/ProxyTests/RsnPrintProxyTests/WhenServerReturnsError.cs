@@ -19,7 +19,7 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
             this.HttpHandler.StatusCode = HttpStatusCode.InternalServerError;
             this.HttpHandler.ResponseString = "Document not found";
 
-            this.action = () => this.Sut.GetRsnPrintAsPdf(99999, "Service", "FC001");
+            this.action = () => this.Sut.GetRsnAsPdf(99999, "Service", "FC001");
         }
 
         [Test]

@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using Linn.Common.Logging;
     using Linn.PrintService.Messaging.Host.Handlers;

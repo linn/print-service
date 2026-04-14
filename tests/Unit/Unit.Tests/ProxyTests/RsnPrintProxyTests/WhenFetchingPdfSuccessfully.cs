@@ -21,7 +21,7 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
             this.HttpHandler.StatusCode = HttpStatusCode.OK;
             this.HttpHandler.ResponseBytes = this.pdfData;
 
-            this.result = await this.Sut.GetRsnPrintAsPdf(12345, "Service", "FC001");
+            this.result = await this.Sut.GetRsnAsPdf(12345, "Service", "FC001");
         }
 
         [Test]

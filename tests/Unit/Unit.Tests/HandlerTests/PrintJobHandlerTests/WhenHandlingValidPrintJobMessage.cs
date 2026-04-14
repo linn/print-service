@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintJobHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
     using System.Collections.Generic;
     using System.Linq;

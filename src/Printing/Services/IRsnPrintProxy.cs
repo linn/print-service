@@ -4,6 +4,6 @@ namespace Linn.PrintService.Printing.Services
 
     public interface IRsnPrintProxy
     {
-        Task<byte[]> GetRsnPrintAsPdf(int rsnNumber, string copyType, string facilityCode);
+        Task<byte[]> GetRsnAsPdf(int rsnNumber, string copyType, string facilityCode);
     }
 }

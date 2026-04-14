@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
     using System.Collections.Generic;
@@ -6,40 +6,45 @@ namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandl
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Linn.Common.Logging;
+    using FluentAssertions;
+
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Host.Exceptions;
 
     using NSubstitute;
 
     using NUnit.Framework;
 
-    public class WhenRsnNumberIsNotNumeric : ContextBase
+    public class WhenProxyReturnsNoData : ContextBase
     {
+        private Func<Task> action;
+
         [SetUp]
-        public async Task SetUp()
+        public void SetUp()
         {
+            this.RsnPrintProxy.GetRsnAsPdf(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
+                .Returns(new byte[0]);
+
             var message = new Message
                               {
                                   RoutingKey = "print.rsn.document",
                                   Headers = new Dictionary<string, object>
                                                 {
-                                                    { "rsnNumber", Encoding.UTF8.GetBytes("not-a-number") },
+                                                    { "rsnNumber", Encoding.UTF8.GetBytes("12345") },
                                                     { "copyType", Encoding.UTF8.GetBytes("original") },
                                                     { "facilityCode", Encoding.UTF8.GetBytes("FC001") },
                                                     { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
                                                 }
                               };
 
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
         }
 
         [Test]
-        public void ShouldNotCallProxy()
+        public async Task ShouldThrowRsnPrintMessageException()
         {
-            this.RsnPrintProxy.DidNotReceive().GetRsnPrintAsPdf(
-                Arg.Any<int>(),
-                Arg.Any<string>(),
-                Arg.Any<string>());
+            await this.action.Should().ThrowAsync<RsnPrintMessageException>()
+                .WithMessage("*No PDF data returned*");
         }
 
         [Test]
@@ -49,16 +54,6 @@ namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandl
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<byte[]>());
-        }
-
-        [Test]
-        public void ShouldLogAsPrintingError()
-        {
-            this.Log.Received(1).Write(
-                LoggingLevel.Error,
-                Arg.Any<IEnumerable<LoggingProperty>>(),
-                Arg.Is<string>(s => s.Contains("IPP printing failed") && s.Contains("not-a-number")),
-                Arg.Any<Exception>());
         }
     }
 }

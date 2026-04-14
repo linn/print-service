@@ -19,12 +19,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\IoC\IoC.csproj" />
-		<ProjectReference Include="..\..\..\src\Messaging.Host\Messaging.Host.csproj" />
 		<ProjectReference Include="..\..\..\src\Service\Service.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="ProxyTests\RsnPrintProxyTests\" />
 	</ItemGroup>
 
 </Project>

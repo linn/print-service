@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -33,7 +33,7 @@ namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandl
             this.printerUri = "ipp://printer.local:631/ipp/print";
             this.pdfData = new byte[] { 1, 2, 3, 4, 5 };
 
-            this.RsnPrintProxy.GetRsnPrintAsPdf(this.rsnNumber, this.copyType, this.facilityCode)
+            this.RsnPrintProxy.GetRsnAsPdf(this.rsnNumber, this.copyType, this.facilityCode)
                 .Returns(this.pdfData);
 
             var message = new Message
@@ -54,7 +54,7 @@ namespace Linn.PrintService.Integration.Tests.HandlerTests.PrintRsnDocumentHandl
         [Test]
         public void ShouldCallProxy()
         {
-            this.RsnPrintProxy.Received(1).GetRsnPrintAsPdf(this.rsnNumber, this.copyType, this.facilityCode);
+            this.RsnPrintProxy.Received(1).GetRsnAsPdf(this.rsnNumber, this.copyType, this.facilityCode);
         }
 
         [Test]
