@@ -10,23 +10,33 @@ namespace Linn.PrintService.Proxy
     public class RsnPrintProxy : IRsnPrintProxy
     {
         private readonly IHttpClientFactory httpClientFactory;
-        private readonly string baseUri;
+        private readonly Uri baseUri;
 
         public RsnPrintProxy(IHttpClientFactory httpClientFactory)
         {
             this.httpClientFactory = httpClientFactory;
-            this.baseUri = ConfigurationManager.Configuration["PROXY_ROOT"]
-                           ?? throw new InvalidOperationException("PROXY_ROOT is not configured");
+            var proxyRoot = ConfigurationManager.Configuration["PROXY_ROOT"]
+                            ?? throw new InvalidOperationException("PROXY_ROOT is not configured");
+
+            if (!Uri.TryCreate(proxyRoot, UriKind.Absolute, out var parsedUri))
+            {
+                throw new InvalidOperationException(
+                    $"PROXY_ROOT must be a valid absolute URI, got: '{proxyRoot}'");
+            }
+
+            this.baseUri = parsedUri;
         }
 
         public async Task<byte[]> GetRsnPrintAsPdf(int rsnNumber, string copyType, string facilityCode)
         {
             var encodedCopyType = Uri.EscapeDataString(copyType ?? string.Empty);
             var encodedFacilityCode = Uri.EscapeDataString(facilityCode ?? string.Empty);
-            var uri = $"{this.baseUri}/service/rsns/print/pdf?rsnNumber={rsnNumber}&copyType={encodedCopyType}&facilityCode={encodedFacilityCode}";
+            var uri = new Uri(
+                this.baseUri,
+                $"/service/rsns/print/pdf?rsnNumber={rsnNumber}&copyType={encodedCopyType}&facilityCode={encodedFacilityCode}");
 
             var client = this.httpClientFactory.CreateClient("RsnPdfProxy");
-            using (var response = await client.GetAsync(new Uri(uri, UriKind.RelativeOrAbsolute)))
+            using (var response = await client.GetAsync(uri))
             {
                 if (!response.IsSuccessStatusCode)
                 {

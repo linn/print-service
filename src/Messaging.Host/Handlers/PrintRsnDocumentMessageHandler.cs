@@ -45,6 +45,12 @@ namespace Linn.PrintService.Messaging.Host.Handlers
                 var facilityCode = Encoding.UTF8.GetString((byte[])facilityCodeObj);
                 var printerUri = Encoding.UTF8.GetString((byte[])printerUriObj);
 
+                if (!int.TryParse(rsnNumber, out var parsedRsnNumber))
+                {
+                    throw new IppPrintingException(
+                        $"Invalid rsnNumber header value: '{rsnNumber}' is not a valid integer");
+                }
+
                 var jobName = message.Headers.TryGetValue("jobName", out var jobNameObj)
                     ? Encoding.UTF8.GetString((byte[])jobNameObj)
                     : $"RSN{rsnNumber}";
@@ -53,7 +59,7 @@ namespace Linn.PrintService.Messaging.Host.Handlers
                     $"[PrintRsnDocument] Fetching PDF for RSN {rsnNumber}, copyType={copyType}, facilityCode={facilityCode}");
 
                 var data = await this.rsnPrintProxy.GetRsnPrintAsPdf(
-                    int.Parse(rsnNumber),
+                    parsedRsnNumber,
                     copyType,
                     facilityCode);
 
