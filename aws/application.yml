@@ -37,6 +37,9 @@ Parameters:
   rabbitPassword:
     Type: String
     Description: Rabbit password
+  proxyRoot:
+    Type: String
+    Description: Proxy root url
 Conditions:
   isTesting: !Equals [!Ref environmentSuffix, "-sys"]
 
@@ -202,6 +205,8 @@ Resources:
               Value: !Ref rabbitUsername
             - Name: RABBIT_PASSWORD
               Value: !Ref rabbitPassword
+            - Name: PROXY_ROOT
+              Value: !Ref proxyRoot
 
   messagingService:
     Type: AWS::ECS::Service
