@@ -25,6 +25,7 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
 
     aws s3 cp s3://$S3_BUCKET_NAME/printService/sys.env ./secrets.env
 
+
     STACK_NAME=printService-sys
     APP_ROOT=http://app-sys.linn.co.uk
     PROXY_ROOT=http://app.linn.co.uk
