@@ -24,7 +24,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
         {
             var message = new Message
                               {
-                                  RoutingKey = "print.packing-list",
+                                  RoutingKey = "print.packing-list.document",
                                   Headers = new Dictionary<string, object>()
                               };
 
