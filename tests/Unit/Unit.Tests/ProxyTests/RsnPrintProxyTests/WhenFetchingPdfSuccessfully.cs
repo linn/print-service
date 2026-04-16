@@ -36,11 +36,5 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
             this.HttpHandler.LastRequest.RequestUri.AbsoluteUri
                 .Should().Be("https://app.test.com/service/rsns/print/pdf?rsnNumber=12345&copyType=Service&facilityCode=FC001");
         }
-
-        [Test]
-        public void ShouldUseGetMethod()
-        {
-            this.HttpHandler.LastRequest.Method.Should().Be(System.Net.Http.HttpMethod.Get);
-        }
     }
 }

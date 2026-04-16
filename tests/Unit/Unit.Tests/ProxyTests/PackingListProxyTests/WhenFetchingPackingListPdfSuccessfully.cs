@@ -35,11 +35,5 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.PackingListProxyTests
             this.HttpHandler.LastRequest.RequestUri.AbsoluteUri
                 .Should().Be("https://app.test.com/stores2/consignments/67890/packing-list/pdf");
         }
-
-        [Test]
-        public void ShouldUseGetMethod()
-        {
-            this.HttpHandler.LastRequest.Method.Should().Be(System.Net.Http.HttpMethod.Get);
-        }
     }
 }

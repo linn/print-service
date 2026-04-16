@@ -10,7 +10,6 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Host.Exceptions;
 
-
     using NSubstitute;
 
     using NUnit.Framework;
