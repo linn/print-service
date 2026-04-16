@@ -49,7 +49,7 @@ rabbitUsername=$RABBIT_USERNAME \
 rabbitPassword=$RABBIT_PASSWORD \
 rabbitPort=$RABBIT_PORT \
 proxyRoot=$PROXY_ROOT \
---capabilities=CAPABILITY_IAM
 --tags Name=$STACK_NAME CIT=IT \
+--capabilities=CAPABILITY_IAM
 
 echo "deploy complete"
