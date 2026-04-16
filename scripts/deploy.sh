@@ -32,7 +32,6 @@ if [ "${TRAVIS_BRANCH}" = "main" ]; then
   fi
 fi
 
-
 # load the secret variables but hide the output from the travis log
 source ./secrets.env > /dev/null 2>&1
 
@@ -50,7 +49,6 @@ rabbitUsername=$RABBIT_USERNAME \
 rabbitPassword=$RABBIT_PASSWORD \
 rabbitPort=$RABBIT_PORT \
 proxyRoot=$PROXY_ROOT \
---tags Name=$STACK_NAME CIT=IT \
 --capabilities=CAPABILITY_IAM
 
 echo "deploy complete"

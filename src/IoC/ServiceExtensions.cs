@@ -40,6 +40,13 @@
                         new MediaTypeWithQualityHeaderValue("application/pdf"));
                 });
 
+            services.AddHttpClient<IPackingListProxy, PackingListProxy>(client =>
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/pdf"));
+                });
+
             return services;
         }
     }
