@@ -1,6 +1,5 @@
-namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
+namespace Linn.PrintService.Unit.Tests.ProxyTests.PackingListProxyTests
 {
-    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -8,7 +7,7 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
 
     using NUnit.Framework;
 
-    public class WhenFetchingPdfSuccessfully : ContextBase
+    public class WhenFetchingPackingListPdfSuccessfully : ContextBase
     {
         private byte[] pdfData;
 
@@ -21,7 +20,7 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
             this.HttpHandler.StatusCode = HttpStatusCode.OK;
             this.HttpHandler.ResponseBytes = this.pdfData;
 
-            this.result = await this.Sut.GetRsnAsPdf(12345, "Service", "FC001");
+            this.result = await this.Sut.GetPackingListAsPdf(67890);
         }
 
         [Test]
@@ -34,7 +33,7 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.RsnPrintProxyTests
         public void ShouldBuildCorrectUri()
         {
             this.HttpHandler.LastRequest.RequestUri.AbsoluteUri
-                .Should().Be("https://app.test.com/service/rsns/print/pdf?rsnNumber=12345&copyType=Service&facilityCode=FC001");
+                .Should().Be("https://app.test.com/stores2/consignments/67890/packing-list/pdf");
         }
     }
 }
