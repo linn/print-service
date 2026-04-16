@@ -32,7 +32,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 
             var message = new Message
                               {
-                                  RoutingKey = "print.packing-list.document",
+                                  RoutingKey = "print.packing-list",
                                   Headers = new Dictionary<string, object>
                                                 {
                                                     { "consignmentNumber", Encoding.UTF8.GetBytes(this.consignmentNumber.ToString()) },

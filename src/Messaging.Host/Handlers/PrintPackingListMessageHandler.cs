@@ -22,7 +22,7 @@ namespace Linn.PrintService.Messaging.Host.Handlers
             this.log = log;
         }
 
-        public string RoutingKey { get; } = "print.packing-list.document";
+        public string RoutingKey { get; } = "print.packing-list";
 
         public async Task HandleAsync(Message message, CancellationToken cancellationToken)
         {

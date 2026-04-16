@@ -12,7 +12,7 @@ builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
     {
         var config = new RabbitChannelConfiguration(
             queueName: "print",               
-            routingKeys: new[] { "print.job", "print.rsn.document", "print.packing-list.document" },
+            routingKeys: new[] { "print.job", "print.rsn.document", "print.packing-list" },
             exchangeName: "print",
             durableExchange: true,
             createConsumerChannel: true,
