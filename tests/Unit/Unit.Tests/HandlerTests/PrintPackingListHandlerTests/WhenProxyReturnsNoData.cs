@@ -30,7 +30,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
                                   RoutingKey = "print.packing-list.document",
                                   Headers = new Dictionary<string, object>
                                                 {
-                                                    { "consignmentNumber", Encoding.UTF8.GetBytes("67890") },
+                                                    { "consignmentId", Encoding.UTF8.GetBytes("67890") },
                                                     { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
                                                 }
                               };

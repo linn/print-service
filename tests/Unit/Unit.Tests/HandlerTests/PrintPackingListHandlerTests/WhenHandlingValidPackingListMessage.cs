@@ -35,7 +35,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
                                   RoutingKey = "print.packing-list.document",
                                   Headers = new Dictionary<string, object>
                                                 {
-                                                    { "consignmentNumber", Encoding.UTF8.GetBytes(this.consignmentNumber.ToString()) },
+                                                    { "consignmentId", Encoding.UTF8.GetBytes(this.consignmentNumber.ToString()) },
                                                     { "printerUri", Encoding.UTF8.GetBytes(this.printerUri) }
                                                 }
                               };

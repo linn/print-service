@@ -28,11 +28,11 @@ namespace Linn.PrintService.Messaging.Handlers
         {
             this.log.Info("[PrintPackingList] Received a message");
 
-            if (!message.TryGetHeaderAsString("consignmentNumber", out var consignmentNumberValue)
+            if (!message.TryGetHeaderAsString("consignmentId", out var consignmentNumberValue)
                 || !message.TryGetHeaderAsString("printerUri", out var printerUri))
             {
                 throw new PackingListPrintMessageException(
-                    "Missing required header: consignmentNumber or printerUri");
+                    "Missing required header: consignmentId or printerUri");
             }
 
             if (!int.TryParse(consignmentNumberValue, out var consignmentNumber))
