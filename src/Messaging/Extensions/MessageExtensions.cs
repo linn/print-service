@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Messaging.Host.Extensions
+namespace Linn.PrintService.Messaging.Extensions
 {
     using System.Text;
 

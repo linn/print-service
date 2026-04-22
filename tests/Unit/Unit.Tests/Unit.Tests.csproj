@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Messaging.Host\Messaging.Host.csproj" />
+		<ProjectReference Include="..\..\..\src\Messaging\Messaging.csproj" />
 		<ProjectReference Include="..\..\..\src\Proxy\Proxy.csproj" />
 	</ItemGroup>
 

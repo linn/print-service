@@ -10,12 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.13" />
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\Printing\Printing.csproj" />
+	  <ProjectReference Include="..\Messaging\Messaging.csproj" />
 	  <ProjectReference Include="..\IoC\IoC.csproj" />
   </ItemGroup>
 </Project>

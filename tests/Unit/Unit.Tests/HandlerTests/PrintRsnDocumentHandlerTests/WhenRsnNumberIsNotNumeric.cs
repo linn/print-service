@@ -9,7 +9,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
     using FluentAssertions;
 
     using Linn.Common.Messaging.RabbitMQ;
-    using Linn.PrintService.Messaging.Host.Exceptions;
+    using Linn.PrintService.Messaging.Exceptions;
 
     using NSubstitute;
 

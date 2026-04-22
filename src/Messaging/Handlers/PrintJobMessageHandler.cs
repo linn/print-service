@@ -1,4 +1,4 @@
-﻿namespace Linn.PrintService.Messaging.Host.Handlers
+namespace Linn.PrintService.Messaging.Handlers
 {
     using System.Text;
 

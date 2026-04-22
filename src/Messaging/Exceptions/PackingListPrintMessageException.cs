@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Messaging.Host.Exceptions
+namespace Linn.PrintService.Messaging.Exceptions
 {
     using System;
 

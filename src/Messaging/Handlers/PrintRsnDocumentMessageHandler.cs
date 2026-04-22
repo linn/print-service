@@ -1,9 +1,9 @@
-namespace Linn.PrintService.Messaging.Host.Handlers
+namespace Linn.PrintService.Messaging.Handlers
 {
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
-    using Linn.PrintService.Messaging.Host.Exceptions;
-    using Linn.PrintService.Messaging.Host.Extensions;
+    using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Extensions;
     using Linn.PrintService.Printing.Services;
 
     public class PrintRsnDocumentMessageHandler : IMessageHandler
@@ -50,19 +50,14 @@ namespace Linn.PrintService.Messaging.Host.Handlers
             this.log.Info(
                 $"[PrintRsnDocument] Fetching PDF for RSN {rsnNumber}, copyType={copyType}, facilityCode={facilityCode}");
 
-            var data = await this.rsnPrintProxy.GetRsnAsPdf(
-                parsedRsnNumber,
-                copyType,
-                facilityCode);
+            var data = await this.rsnPrintProxy.GetRsnAsPdf(parsedRsnNumber, copyType, facilityCode);
 
             if (data == null || data.Length == 0)
             {
-                throw new RsnPrintMessageException(
-                    $"No PDF data returned for RSN {rsnNumber}");
+                throw new RsnPrintMessageException($"No PDF data returned for RSN {rsnNumber}");
             }
 
-            this.log.Info(
-                $"[PrintRsnDocument] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintRsnDocument] Received {data.Length} bytes, printing to {printerUri}");
 
             await this.printingService.Print(printerUri, jobName, data);
 
