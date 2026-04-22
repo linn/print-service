@@ -35,7 +35,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
                                   Headers = new Dictionary<string, object>
                                                 {
                                                     { "documentNumber", Encoding.UTF8.GetBytes("12345") },
-                                                    { "documentType", Encoding.UTF8.GetBytes("INV") },
+                                                    { "documentType", Encoding.UTF8.GetBytes("I") },
                                                     { "showTermsAndConditions", Encoding.UTF8.GetBytes("false") },
                                                     { "showPrices", Encoding.UTF8.GetBytes("true") },
                                                     { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }

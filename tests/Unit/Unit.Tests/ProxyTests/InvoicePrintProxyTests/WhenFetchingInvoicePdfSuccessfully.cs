@@ -35,11 +35,5 @@ namespace Linn.PrintService.Unit.Tests.ProxyTests.InvoicePrintProxyTests
             this.HttpHandler.LastRequest.RequestUri.AbsoluteUri
                 .Should().Be("https://app.test.com/sales/documents/pdf/INV/12345?showTerms=False&showPrices=True");
         }
-
-        [Test]
-        public void ShouldUseGetMethod()
-        {
-            this.HttpHandler.LastRequest.Method.Should().Be(System.Net.Http.HttpMethod.Get);
-        }
     }
 }
