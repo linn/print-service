@@ -47,6 +47,13 @@
                         new MediaTypeWithQualityHeaderValue("application/pdf"));
                 });
 
+            services.AddHttpClient<IInvoicePrintProxy, InvoicePrintProxy>(client =>
+                {
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                        new MediaTypeWithQualityHeaderValue("application/pdf"));
+                });
+
             return services;
         }
     }

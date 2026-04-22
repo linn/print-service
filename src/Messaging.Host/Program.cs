@@ -1,18 +1,18 @@
 using Linn.Common.Messaging.RabbitMQ;
 using Linn.PrintService.IoC;
 using Linn.PrintService.Messaging.Host;
-using Linn.PrintService.Messaging.Host.Handlers;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddServices();
 builder.Services.AddLog();
+builder.Services.AddMessageHandlers();
 
 builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
     {
         var config = new RabbitChannelConfiguration(
             queueName: "print",               
-            routingKeys: new[] { "print.job", "print.rsn.document", "print.packing-list.document" },
+            routingKeys: new[] { "print.job", "print.rsn.document", "print.packing-list.document", "print.invoice.document" },
             exchangeName: "print",
             durableExchange: true,
             createConsumerChannel: true,
@@ -22,10 +22,6 @@ builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
         Console.WriteLine($"[Program] Rabbit config created: Queue={config.QueueName}");
         return config;
     });
-
-builder.Services.AddSingleton<IMessageHandler, PrintJobMessageHandler>();
-builder.Services.AddSingleton<IMessageHandler, PrintRsnDocumentMessageHandler>();
-builder.Services.AddSingleton<IMessageHandler, PrintPackingListMessageHandler>();
 
 builder.Services.AddHostedService<RabbitChannelInitializer>();
 

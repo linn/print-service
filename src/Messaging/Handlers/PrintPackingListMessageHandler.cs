@@ -1,9 +1,9 @@
-namespace Linn.PrintService.Messaging.Host.Handlers
+namespace Linn.PrintService.Messaging.Handlers
 {
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
-    using Linn.PrintService.Messaging.Host.Exceptions;
-    using Linn.PrintService.Messaging.Host.Extensions;
+    using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Extensions;
     using Linn.PrintService.Printing.Services;
 
     public class PrintPackingListMessageHandler : IMessageHandler
@@ -45,8 +45,7 @@ namespace Linn.PrintService.Messaging.Host.Handlers
                 ? jobNameValue
                 : $"PackingList_{consignmentNumber}";
 
-            this.log.Info(
-                $"[PrintPackingList] Fetching PDF for consignment {consignmentNumber}");
+            this.log.Info($"[PrintPackingList] Fetching PDF for consignment {consignmentNumber}");
 
             var data = await this.packingListProxy.GetPackingListAsPdf(consignmentNumber);
 
@@ -56,8 +55,7 @@ namespace Linn.PrintService.Messaging.Host.Handlers
                     $"No PDF data returned for consignment {consignmentNumber}");
             }
 
-            this.log.Info(
-                $"[PrintPackingList] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintPackingList] Received {data.Length} bytes, printing to {printerUri}");
 
             await this.printingService.Print(printerUri, jobName, data);
 

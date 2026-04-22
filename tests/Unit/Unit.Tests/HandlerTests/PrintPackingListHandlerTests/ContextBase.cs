@@ -1,7 +1,7 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
     using Linn.Common.Logging;
-    using Linn.PrintService.Messaging.Host.Handlers;
+    using Linn.PrintService.Messaging.Handlers;
     using Linn.PrintService.Printing.Services;
 
     using NSubstitute;

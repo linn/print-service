@@ -1,8 +1,7 @@
-namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 
     using NUnit.Framework;
 
-    public class WhenConsignmentNumberIsNotNumeric : ContextBase
+    public class WhenHandlingInvoiceMessageWithMissingHeaders : ContextBase
     {
         private Func<Task> action;
 
@@ -24,28 +23,28 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
         {
             var message = new Message
                               {
-                                  RoutingKey = "print.packing-list.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "consignmentNumber", Encoding.UTF8.GetBytes("not-a-number") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
-                                                }
+                                  RoutingKey = "print.invoice.document",
+                                  Headers = new Dictionary<string, object>()
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
         }
 
         [Test]
-        public async Task ShouldThrowRsnPrintMessageException()
+        public async Task ShouldThrowInvoicePrintMessageException()
         {
-            await this.action.Should().ThrowAsync<PackingListPrintMessageException>()
-                .WithMessage("*not-a-number*");
+            await this.action.Should().ThrowAsync<InvoicePrintMessageException>()
+                .WithMessage("*Missing required header*");
         }
 
         [Test]
         public void ShouldNotCallProxy()
         {
-            this.PackingListProxy.DidNotReceive().GetPackingListAsPdf(Arg.Any<int>());
+            this.InvoicePrintProxy.DidNotReceive().GetInvoiceAsPdf(
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<bool>(),
+                Arg.Any<bool>());
         }
 
         [Test]
