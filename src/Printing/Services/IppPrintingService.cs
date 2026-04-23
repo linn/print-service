@@ -103,9 +103,21 @@ namespace Linn.PrintService.Printing.Services
                 attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
                 attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
                 attrs = this.AddAttr(attrs, 0x42, "job-name", jobName);
-                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/pdf");
+                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/octet-stream");
 
                 ms.Write(attrs, 0, attrs.Length);
+
+                // job-attributes-tag
+                ms.WriteByte(0x02);
+
+                // fit-to-page = false: tag(0x22) + name-len(0x000b) + "fit-to-page" + value-len(0x0001) + false(0x00)
+                ms.Write(new byte[]
+                    {
+                        0x22, 0x00, 0x0b,
+                        0x66, 0x69, 0x74, 0x2d, 0x74, 0x6f, 0x2d, 0x70, 0x61, 0x67, 0x65, // "fit-to-page"
+                        0x00, 0x01,
+                        0x00
+                    }, 0, 17);
 
                 // end-of-attributes-tag
                 ms.WriteByte(0x03);
