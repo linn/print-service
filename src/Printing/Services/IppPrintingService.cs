@@ -90,7 +90,7 @@ namespace Linn.PrintService.Printing.Services
             {
                 // IPP header
                 ms.WriteByte(0x01); // major version
-                ms.WriteByte(0x01); // minor version
+                ms.WriteByte(0x00); // minor version
                 ms.WriteByte(0x00); // operation-id high
                 ms.WriteByte(0x02); // operation-id low (Print-Job)
                 ms.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(1)), 0, 4); // request-id
