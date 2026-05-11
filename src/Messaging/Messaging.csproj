@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Printing\Printing.csproj" />
+    <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
   </ItemGroup>
 
 </Project>

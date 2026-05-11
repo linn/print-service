@@ -1,8 +1,8 @@
-﻿namespace Linn.PrintService.Integration.Tests.PrintModuleTests
+namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 {
     using System.Net.Http;
 
-    using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;

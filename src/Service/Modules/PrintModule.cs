@@ -3,9 +3,9 @@ namespace Linn.PrintService.Service.Modules
     using System.IO;
     using System.Threading.Tasks;
     using Linn.Common.Service;
-    using Linn.PrintService.Printing;
-    using Linn.PrintService.Printing.Exceptions;
-    using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Domain.LinnApps;
+    using Linn.PrintService.Domain.LinnApps.Exceptions;
+    using Linn.PrintService.Domain.LinnApps.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;

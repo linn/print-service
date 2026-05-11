@@ -4,8 +4,8 @@
     using System.Text;
 
     using Linn.Common.Configuration;
-    using Linn.PrintService.Printing.Exceptions;
-    using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Domain.LinnApps.Exceptions;
+    using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;

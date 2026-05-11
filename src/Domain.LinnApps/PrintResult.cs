@@ -1,4 +1,4 @@
-﻿namespace Linn.PrintService.Printing
+﻿namespace Linn.PrintService.Domain.LinnApps
 {
     public class PrintResult
     {

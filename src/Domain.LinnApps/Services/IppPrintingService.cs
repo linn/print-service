@@ -1,10 +1,10 @@
-namespace Linn.PrintService.Printing.Services
+namespace Linn.PrintService.Domain.LinnApps.Services
 {
     using System.Net;
     using System.Text;
 
     using Linn.Common.Logging;
-    using Linn.PrintService.Printing.Exceptions;
+    using Linn.PrintService.Domain.LinnApps.Exceptions;
 
     public class IppPrintingService : IIppPrintingService
     {

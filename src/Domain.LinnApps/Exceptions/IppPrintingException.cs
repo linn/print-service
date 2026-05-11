@@ -1,4 +1,4 @@
-﻿namespace Linn.PrintService.Printing.Exceptions
+﻿namespace Linn.PrintService.Domain.LinnApps.Exceptions
 {
     using System;
 

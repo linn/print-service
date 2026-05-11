@@ -4,8 +4,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Linn.PrintService.Printing</AssemblyName>
-    <RootNamespace>Linn.PrintService.Printing</RootNamespace>
+    <AssemblyName>Linn.PrintService.Domain.LinnApps</AssemblyName>
+    <RootNamespace>Linn.PrintService.Domain.LinnApps</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

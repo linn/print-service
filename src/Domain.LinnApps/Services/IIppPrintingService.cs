@@ -1,4 +1,4 @@
-namespace Linn.PrintService.Printing.Services
+namespace Linn.PrintService.Domain.LinnApps.Services
 {
     using System.Threading.Tasks;
 
