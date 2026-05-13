@@ -26,13 +26,6 @@ namespace Linn.PrintService.Integration.Tests.Extensions
             return client.GetAsync(uri);
         }
 
-        public static Task<HttpResponseMessage> Post(this HttpClient client, string uri, HttpContent content, Action<HttpClient> configurationAction)
-        {
-            configurationAction(client);
-
-            return client.PostAsync(uri, content);
-        }
-
         public static Task<HttpResponseMessage> Post<T>(this HttpClient client, string uri, T payload, Action<HttpClient> configurationAction)
         {
             configurationAction(client);

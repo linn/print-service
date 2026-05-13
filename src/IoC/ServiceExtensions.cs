@@ -6,7 +6,6 @@
     using Linn.Common.Configuration;
     using Linn.Common.Facade;
     using Linn.PrintService.Domain.LinnApps;
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Facade;
     using Linn.PrintService.Facade.ResourceBuilders;
@@ -18,24 +17,17 @@
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IPrinterMappingFacadeService, PrinterMappingFacadeService>();
-            services.AddScoped<IBuilder<PrinterMapping>, PrinterMappingResourceBuilder>();
-            services.AddScoped<IPrintFacadeService, PrintFacadeService>();
-
             services.AddHttpClient<IIppPrintingService, IppPrintingService>(client =>
                 {
                     var username = ConfigurationManager.Configuration["PRINT_USERNAME"];
                     var password = ConfigurationManager.Configuration["PRINT_PASSWORD"];
 
-                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                    if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
                     {
-                        throw new IppPrintingException(
-                            "Username and password must be configured.");
+                        var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+                        client.DefaultRequestHeaders.Authorization =
+                            new AuthenticationHeaderValue("Basic", authValue);
                     }
-
-                    var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-                    client.DefaultRequestHeaders.Authorization =
-                        new AuthenticationHeaderValue("Basic", authValue);
 
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("application/ipp"));
@@ -63,6 +55,19 @@
                 });
 
             return services;
+        }
+
+        public static IServiceCollection AddFacadeServices(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<IPrintFacadeService, PrintFacadeService>()
+                .AddScoped<IPrinterMappingFacadeService, PrinterMappingFacadeService>();
+        }
+
+        public static IServiceCollection AddBuilders(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<IBuilder<PrinterMapping>, PrinterMappingResourceBuilder>();
         }
     }
 }

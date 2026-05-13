@@ -3,13 +3,13 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Text;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
     using Linn.PrintService.Domain.LinnApps;
-    using Linn.PrintService.Integration.Tests.Extensions;
 
     using NSubstitute;
 
@@ -17,7 +17,6 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 
     public class WhenPostingValidPrintJob : ContextBase
     {
-        private HttpContent requestContent;
         private string printerUri;
         private string jobName;
         private byte[] data;
@@ -32,14 +31,16 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
             this.PrintingService.Print(this.printerUri, this.jobName, Arg.Any<byte[]>())
                 .Returns(Task.FromResult(new PrintResult { Success = true, HttpStatus = 200 }));
 
-            this.requestContent = new ByteArrayContent(this.data);
-            this.requestContent.Headers.ContentType =
-                new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"/print-service/print?printerUri={this.printerUri}&jobName={this.jobName}")
+            {
+                Content = new ByteArrayContent(this.data)
+            };
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            this.Response = this.Client.Post(
-                $"/print-service/print?printerUri={this.printerUri}&jobName={this.jobName}",
-                this.requestContent,
-                with => { with.Accept("application/json"); }).Result;
+            this.Response = this.Client.SendAsync(request).Result;
         }
 
         [Test]

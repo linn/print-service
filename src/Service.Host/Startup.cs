@@ -39,6 +39,8 @@ namespace Linn.PrintService.Service.Host
             services.AddLog();
 
             services.AddServices();
+            services.AddFacadeServices();
+            services.AddBuilders();
             services.AddPersistence();
             services.AddHandlers();
 
