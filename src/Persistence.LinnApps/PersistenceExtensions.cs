@@ -1,8 +1,8 @@
-﻿namespace Linn.PrintService.IoC
+namespace Linn.PrintService.Persistence.LinnApps
 {
     using Linn.Common.Persistence;
     using Linn.Common.Persistence.EntityFramework;
-    using Linn.PrintService.Persistence.LinnApps;
+    using Linn.PrintService.Domain.LinnApps;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +13,9 @@
         {
             return services.AddScoped<ServiceDbContext>()
                 .AddScoped<DbContext>(a => a.GetService<ServiceDbContext>())
-                .AddScoped<ITransactionManager, TransactionManager>();
+                .AddScoped<ITransactionManager, TransactionManager>()
+                .AddScoped<IQueryRepository<PrinterMapping>, EntityFrameworkQueryRepository<PrinterMapping>>(
+                    r => new EntityFrameworkQueryRepository<PrinterMapping>(r.GetService<ServiceDbContext>()?.PrinterMappings));
         }
     }
 }

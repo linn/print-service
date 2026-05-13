@@ -2,10 +2,11 @@ namespace Linn.PrintService.Service.Modules
 {
     using System.IO;
     using System.Threading.Tasks;
+
     using Linn.Common.Service;
-    using Linn.PrintService.Domain.LinnApps;
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
-    using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.Common.Service.Extensions;
+    using Linn.PrintService.Facade;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
@@ -17,6 +18,7 @@ namespace Linn.PrintService.Service.Modules
             app.MapPost("/print-service/print", this.Print);
             app.MapGet("/print-service/detailed-status", this.DetailedStatus);
             app.MapGet("/print-service/status", this.Status);
+            app.MapGet("/print-service/printer-mappings", this.GetDefaultPrinters);
         }
 
         private async Task Print(
@@ -24,7 +26,7 @@ namespace Linn.PrintService.Service.Modules
             HttpResponse res,
             string printerUri,
             string jobName,
-            IIppPrintingService printingService)
+            IPrintFacadeService service)
         {
             byte[] data;
             using (var ms = new MemoryStream())
@@ -33,53 +35,30 @@ namespace Linn.PrintService.Service.Modules
                 data = ms.ToArray();
             }
 
-            PrintResult result;
-
-            try
-            {
-                result = await printingService.Print(printerUri, jobName, data);
-            }
-            catch (IppPrintingException e)
-            {
-                res.StatusCode = StatusCodes.Status400BadRequest;
-                await res.WriteAsJsonAsync(new { Error = "Printing Error", Message = e.Message });
-                return;
-            }
-
-            await res.WriteAsJsonAsync(result);
+            await res.Negotiate(await service.PrintAsync(printerUri, jobName, data));
         }
 
         private async Task DetailedStatus(
             HttpRequest req,
             HttpResponse res,
             string printerUri,
-            IIppPrintingService printingService)
+            IPrintFacadeService service)
         {
-            PrintResult result;
-
-            try
-            {
-                result = await printingService.GetDetailedStatus(printerUri);
-            }
-            catch (IppPrintingException e)
-            {
-                res.StatusCode = StatusCodes.Status400BadRequest;
-                await res.WriteAsJsonAsync(new { Error = "Status Error", Message = e.Message });
-                return;
-            }
-
-            if (!result.Success)
-            {
-                res.StatusCode = StatusCodes.Status503ServiceUnavailable;
-            }
-
-            await res.WriteAsJsonAsync(result);
+            await res.Negotiate(await service.GetDetailedStatusAsync(printerUri));
         }
 
         private async Task Status(HttpRequest req, HttpResponse res)
         {
             res.StatusCode = StatusCodes.Status200OK;
             await res.WriteAsJsonAsync(new { Status = "OK" });
+        }
+
+        private async Task GetDefaultPrinters(
+            HttpRequest req,
+            HttpResponse res,
+            IPrinterMappingFacadeService service)
+        {
+            await res.Negotiate(service.GetDefaultPrinters());
         }
     }
 }

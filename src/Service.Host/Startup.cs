@@ -40,6 +40,7 @@ namespace Linn.PrintService.Service.Host
 
             services.AddServices();
             services.AddPersistence();
+            services.AddHandlers();
 
             services.AddAuthorization();
 

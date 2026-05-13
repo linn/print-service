@@ -14,11 +14,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
-		<PackageReference Include="Linn.Common.Service" Version="1.1.0" />
+		<PackageReference Include="Linn.Common.Service" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
+	  <ProjectReference Include="..\Facade\Facade.csproj" />
+	  <ProjectReference Include="..\Resources\Resources.csproj" />
 	</ItemGroup>
 
 </Project>

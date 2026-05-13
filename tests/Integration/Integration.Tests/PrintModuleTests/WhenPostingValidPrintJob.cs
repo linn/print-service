@@ -4,10 +4,12 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Threading.Tasks;
 
     using FluentAssertions;
 
     using Linn.PrintService.Domain.LinnApps;
+    using Linn.PrintService.Integration.Tests.Extensions;
 
     using NSubstitute;
 
@@ -27,13 +29,17 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
             this.jobName = "TestJob";
             this.data = Encoding.UTF8.GetBytes("Hello World");
 
+            this.PrintingService.Print(this.printerUri, this.jobName, Arg.Any<byte[]>())
+                .Returns(Task.FromResult(new PrintResult { Success = true, HttpStatus = 200 }));
+
             this.requestContent = new ByteArrayContent(this.data);
             this.requestContent.Headers.ContentType =
                 new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
 
-            this.Response = this.Client.PostAsync(
+            this.Response = this.Client.Post(
                 $"/print-service/print?printerUri={this.printerUri}&jobName={this.jobName}",
-                this.requestContent).Result;
+                this.requestContent,
+                with => { with.Accept("application/json"); }).Result;
         }
 
         [Test]

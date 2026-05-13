@@ -4,8 +4,12 @@
     using System.Text;
 
     using Linn.Common.Configuration;
+    using Linn.Common.Facade;
+    using Linn.PrintService.Domain.LinnApps;
     using Linn.PrintService.Domain.LinnApps.Exceptions;
     using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.PrintService.Facade;
+    using Linn.PrintService.Facade.ResourceBuilders;
     using Linn.PrintService.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +18,10 @@
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddScoped<IPrinterMappingFacadeService, PrinterMappingFacadeService>();
+            services.AddScoped<IBuilder<PrinterMapping>, PrinterMappingResourceBuilder>();
+            services.AddScoped<IPrintFacadeService, PrintFacadeService>();
+
             services.AddHttpClient<IIppPrintingService, IppPrintingService>(client =>
                 {
                     var username = ConfigurationManager.Configuration["PRINT_USERNAME"];

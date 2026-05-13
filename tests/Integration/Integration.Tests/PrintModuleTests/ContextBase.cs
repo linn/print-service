@@ -2,7 +2,12 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 {
     using System.Net.Http;
 
+    using Linn.Common.Persistence.EntityFramework;
+    using Linn.PrintService.Domain.LinnApps;
     using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.PrintService.Facade;
+    using Linn.PrintService.Facade.ResourceBuilders;
+    using Linn.PrintService.IoC;
     using Linn.PrintService.Service.Modules;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -19,17 +24,36 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 
         protected IIppPrintingService PrintingService { get; private set; }
 
+        protected TestServiceDbContext DbContext { get; private set; }
+
         [SetUp]
         public void SetUpContext()
         {
+            this.DbContext = new TestServiceDbContext();
+
             this.PrintingService = Substitute.For<IIppPrintingService>();
+
+            IPrintFacadeService printFacadeService = new PrintFacadeService(this.PrintingService);
+
+            var repository = new EntityFrameworkQueryRepository<PrinterMapping>(this.DbContext.PrinterMappings);
+            var resourceBuilder = new PrinterMappingResourceBuilder();
+            IPrinterMappingFacadeService printerMappingFacadeService =
+                new PrinterMappingFacadeService(repository, resourceBuilder);
 
             this.Client = TestClient.With<PrintModule>(
                 services =>
                     {
-                        services.AddSingleton(this.PrintingService);
-                        services.AddRouting();
+                        services.AddSingleton(printFacadeService);
+                        services.AddSingleton(printerMappingFacadeService);
+                        services.AddHandlers();
                     });
+        }
+
+        [OneTimeTearDown]
+        public void TearDownContext()
+        {
+            this.DbContext.Dispose();
         }
     }
 }
+
