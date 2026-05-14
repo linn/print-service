@@ -1,9 +1,5 @@
 ﻿namespace Linn.PrintService.Facade
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
     using Linn.PrintService.Domain.LinnApps;
@@ -24,10 +20,12 @@
 
         public async Task<IResult<IEnumerable<PrinterMappingResource>>> GetDefaultPrinters()
         {
-            var resources = await Task.Run(() => this.repository
-                .FilterBy(p => p.DefaultForGroup == "Y" && p.PrinterType == "A4")
+            var printers = await this.repository
+                .FilterByAsync(p => p.DefaultForGroup == "Y" && p.PrinterType == "A4");
+
+            var resources = printers
                 .Select(p => (PrinterMappingResource)this.resourceBuilder.Build(p, null))
-                .ToList());
+                .ToList();
 
             return resources.Count == 0
                 ? new NotFoundResult<IEnumerable<PrinterMappingResource>>("No default A4 printers configured")
