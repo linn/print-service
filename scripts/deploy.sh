@@ -7,29 +7,29 @@ unzip -q awscliv2.zip
 sudo ./aws/install >/dev/null 2>&1
 echo "AWS CLI installed."
 
+BUILD_NUMBER=$((LAST_TRAVIS_BUILD_NUMBER + GITHUB_RUN_NUMBER))
+
 # deploy on aws
-if [ "${TRAVIS_BRANCH}" = "main" ]; then
-  if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
-    # master - deploy to production
-    echo deploy to production
+if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+  # pull request based on main - deploy to sys
+  echo deploy to sys
 
-    aws s3 cp s3://$S3_BUCKET_NAME/printService/production.env ./secrets.env
+  aws s3 cp s3://$S3_BUCKET_NAME/printService/sys.env ./secrets.env
 
-    STACK_NAME=printService
-    APP_ROOT=http://app.linn.co.uk
-    PROXY_ROOT=http://app.linn.co.uk
-  	ENV_SUFFIX=
-  else
-    # pull request based on master - deploy to sys
-    echo deploy to sys
+  STACK_NAME=printService-sys
+  APP_ROOT=http://app-sys.linn.co.uk
+  PROXY_ROOT=http://app.linn.co.uk
+  ENV_SUFFIX=-sys
+else
+  # main branch - deploy to production
+  echo deploy to production
 
-    aws s3 cp s3://$S3_BUCKET_NAME/printService/sys.env ./secrets.env
+  aws s3 cp s3://$S3_BUCKET_NAME/printService/production.env ./secrets.env
 
-    STACK_NAME=printService-sys
-    APP_ROOT=http://app-sys.linn.co.uk
-    PROXY_ROOT=http://app.linn.co.uk
-    ENV_SUFFIX=-sys
-  fi
+  STACK_NAME=printService
+  APP_ROOT=http://app.linn.co.uk
+  PROXY_ROOT=http://app.linn.co.uk
+  ENV_SUFFIX=
 fi
 
 # load the secret variables but hide the output from the travis log
@@ -40,7 +40,7 @@ aws cloudformation deploy \
 --stack-name $STACK_NAME \
 --template-file ./aws/application.yml \
 --parameter-overrides \
-dockerTag=$TRAVIS_BUILD_NUMBER \
+dockerTag=$BUILD_NUMBER \
 printUsername=$PRINT_USERNAME \
 printPassword=$PRINT_PASSWORD \
 environmentSuffix=$ENV_SUFFIX \
