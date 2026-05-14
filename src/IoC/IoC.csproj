@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
     <ProjectReference Include="..\Facade\Facade.csproj" />
     <ProjectReference Include="..\Persistence.LinnApps\Persistence.LinnApps.csproj" />
+    <ProjectReference Include="..\Printing\Printing.csproj" />
     <ProjectReference Include="..\Proxy\Proxy.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />

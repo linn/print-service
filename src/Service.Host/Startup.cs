@@ -6,7 +6,7 @@ namespace Linn.PrintService.Service.Host
     using Linn.PrintService.IoC;
     using Linn.PrintService.Persistence.LinnApps;
 
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
+    using Linn.PrintService.Printing;
     using Linn.PrintService.Service.Models;
 
     using Microsoft.AspNetCore.Builder;

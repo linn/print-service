@@ -58,7 +58,7 @@ namespace Linn.PrintService.Service.Modules
             HttpResponse res,
             IPrinterMappingFacadeService service)
         {
-            await res.Negotiate(service.GetDefaultPrinters());
+            await res.Negotiate(await service.GetDefaultPrinters());
         }
     }
 }

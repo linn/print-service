@@ -4,8 +4,7 @@ namespace Linn.PrintService.Messaging.Handlers
 
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
-    using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.PrintService.Printing;
 
     public class PrintJobMessageHandler : IMessageHandler
     {

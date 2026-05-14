@@ -9,6 +9,7 @@
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Facade;
     using Linn.PrintService.Facade.ResourceBuilders;
+    using Linn.PrintService.Printing;
     using Linn.PrintService.Proxy;
 
     using Microsoft.Extensions.DependencyInjection;

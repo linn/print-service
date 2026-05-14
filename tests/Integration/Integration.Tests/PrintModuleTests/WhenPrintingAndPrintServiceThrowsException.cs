@@ -7,7 +7,7 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 
     using FluentAssertions;
 
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
+    using Linn.PrintService.Printing;
 
     using NSubstitute;
     using NSubstitute.ExceptionExtensions;

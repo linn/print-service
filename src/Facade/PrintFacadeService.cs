@@ -3,9 +3,7 @@ namespace Linn.PrintService.Facade
     using System.Threading.Tasks;
 
     using Linn.Common.Facade;
-    using Linn.PrintService.Domain.LinnApps;
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
-    using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.PrintService.Printing;
     using Linn.PrintService.Resources;
 
     public class PrintFacadeService : IPrintFacadeService

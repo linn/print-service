@@ -4,7 +4,7 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
 
     using Linn.Common.Persistence.EntityFramework;
     using Linn.PrintService.Domain.LinnApps;
-    using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.PrintService.Printing;
     using Linn.PrintService.Facade;
     using Linn.PrintService.Facade.ResourceBuilders;
     using Linn.PrintService.IoC;

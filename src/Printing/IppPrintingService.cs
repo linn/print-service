@@ -1,10 +1,9 @@
-namespace Linn.PrintService.Domain.LinnApps.Services
+namespace Linn.PrintService.Printing
 {
     using System.Net;
     using System.Text;
 
     using Linn.Common.Logging;
-    using Linn.PrintService.Domain.LinnApps.Exceptions;
 
     public class IppPrintingService : IIppPrintingService
     {
@@ -45,7 +44,7 @@ namespace Linn.PrintService.Domain.LinnApps.Services
                               + $"jobName={jobName}, "
                               + $"success={result.Success}, "
                               + $"httpStatus={result.HttpStatus}, "
-                              + $"message={result.ResponsePreview}"); 
+                              + $"message={result.ResponsePreview}");
                 return result;
             }
             catch (Exception ex)
@@ -139,7 +138,7 @@ namespace Linn.PrintService.Domain.LinnApps.Services
                 ms.Write(attrs, 0, attrs.Length);
 
                 ms.WriteByte(0x03); // end-of-attributes-tag
-                
+
                 this.log.Info("Status payload built successfully.");
                 return ms.ToArray();
             }

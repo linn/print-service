@@ -2,7 +2,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
     using Linn.Common.Logging;
     using Linn.PrintService.Messaging.Handlers;
-    using Linn.PrintService.Domain.LinnApps.Services;
+    using Linn.PrintService.Printing;
 
     using NSubstitute;
 

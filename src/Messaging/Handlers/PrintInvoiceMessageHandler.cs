@@ -5,6 +5,7 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
     using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Printing;
 
     public class PrintInvoiceMessageHandler : IMessageHandler
     {

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Linn.Common.Facade;
     using Linn.Common.Persistence;
@@ -21,15 +22,15 @@
             this.resourceBuilder = resourceBuilder;
         }
 
-        public IResult<IEnumerable<PrinterMappingResource>> GetDefaultPrinters()
+        public async Task<IResult<IEnumerable<PrinterMappingResource>>> GetDefaultPrinters()
         {
-            var resources = this.repository
+            var resources = await Task.Run(() => this.repository
                 .FilterBy(p => p.DefaultForGroup == "Y" && p.PrinterType == "A4")
                 .Select(p => (PrinterMappingResource)this.resourceBuilder.Build(p, null))
-                .ToList();
+                .ToList());
 
             return resources.Count == 0
-                ? new BadRequestResult<IEnumerable<PrinterMappingResource>>("No default A4 printers configured")
+                ? new NotFoundResult<IEnumerable<PrinterMappingResource>>("No default A4 printers configured")
                 : new SuccessResult<IEnumerable<PrinterMappingResource>>(resources);
         }
     }

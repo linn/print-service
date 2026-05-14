@@ -32,9 +32,9 @@ namespace Linn.PrintService.Integration.Tests.PrintModuleTests
         }
 
         [Test]
-        public void ShouldReturnBadRequest()
+        public void ShouldReturnNotFound()
         {
-            this.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            this.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }
 }
