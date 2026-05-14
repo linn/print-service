@@ -4,6 +4,7 @@ namespace Linn.PrintService.Service.Host
     using Linn.Common.Service;
     using Linn.Common.Service.Extensions;
     using Linn.PrintService.IoC;
+
     using Linn.PrintService.Printing.Exceptions;
     using Linn.PrintService.Service.Models;
 
@@ -12,6 +13,7 @@ namespace Linn.PrintService.Service.Host
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.JsonWebTokens;
 
     public class Startup
@@ -19,15 +21,24 @@ namespace Linn.PrintService.Service.Host
         public void ConfigureServices(IServiceCollection services)
         {
             JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            
+
             services.AddCors();
             services.AddSingleton<IResponseNegotiator, UniversalResponseNegotiator>();
 
             services.AddCredentialsExtensions();
             services.AddSqsExtensions();
+            services.AddLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    builder.AddConsole();
+                    builder.AddFilter("Microsoft", LogLevel.Warning);
+                    builder.AddFilter("System", LogLevel.Warning);
+                    builder.AddFilter("Linn", LogLevel.Information);
+                });
             services.AddLog();
 
             services.AddServices();
+
             services.AddAuthorization();
 
             // we need this line for reflection to work in the modules

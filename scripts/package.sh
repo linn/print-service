@@ -2,9 +2,8 @@
 set -ev
 
 # build dotnet application
-dotnet publish
-# dotnet publish ./src/Messaging.Host/ -c release
-# dotnet publish ./src/Scheduling.Host/ -c release
+dotnet publish ./src/Service.Host/ -c Release
+dotnet publish ./src/Messaging.Host/ -c Release
 
 # determine which branch this change is from
 # Support both Travis CI and GitHub Actions

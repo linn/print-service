@@ -1,11 +1,6 @@
 ﻿namespace Linn.PrintService.IoC
 {
-    using System;
-
-    using Amazon.SQS;
-
     using Linn.Common.Logging;
-    using Linn.Common.Logging.AmazonSqs;
 
     using Microsoft.Extensions.DependencyInjection;
 

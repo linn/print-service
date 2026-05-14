@@ -53,7 +53,6 @@ if [ "${BRANCH}" = "main" ]; then
   fi
 fi
 
-
 # load the secret variables but hide the output from the travis log
 source ./secrets.env > /dev/null 2>&1
 

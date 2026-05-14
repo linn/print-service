@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ev
 
+dotnet test ./tests/Unit/Unit.Tests/Unit.Tests.csproj
 dotnet test ./tests/Integration/Integration.Tests/Integration.Tests.csproj
 
 echo $?
