@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<AssemblyName>Linn.PrintService.Service.Host</AssemblyName>
 		<RootNamespace>Linn.PrintService.Service.Host</RootNamespace>
 		<PreserveCompilationContext>true</PreserveCompilationContext>
@@ -20,7 +20,7 @@
 		<PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
 		<PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
 		<PackageReference Include="Linn.Common.Rendering" Version="1.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\IoC\IoC.csproj" />

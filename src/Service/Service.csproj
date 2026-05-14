@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<AssemblyName>Linn.PrintService.Service</AssemblyName>
 		<RootNamespace>Linn.PrintService.Service</RootNamespace>
 	</PropertyGroup>
@@ -14,7 +14,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
-		<PackageReference Include="Linn.Common.Service" Version="2.0.0" />
+		<PackageReference Include="Linn.Common.Service" Version="3.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

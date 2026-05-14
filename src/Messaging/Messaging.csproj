@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>Linn.PrintService.Messaging</AssemblyName>
     <RootNamespace>Linn.PrintService.Messaging</RootNamespace>
     <Nullable>enable</Nullable>
@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
-    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="4.0.1" />
+    <PackageReference Include="Linn.Common.Messaging.RabbitMQ" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
