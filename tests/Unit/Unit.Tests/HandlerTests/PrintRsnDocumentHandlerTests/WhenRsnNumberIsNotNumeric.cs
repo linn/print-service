@@ -25,7 +25,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             var bodyJson = JsonSerializer.Serialize(new
             {
                 rsnNumber = "not-a-number",
-                copyType = "original",
+                copyType = "service",
                 facilityCode = "FC001",
                 printerUri = "ipp://printer.local:631/ipp/print"
             });

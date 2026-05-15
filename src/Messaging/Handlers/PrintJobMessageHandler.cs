@@ -27,13 +27,13 @@ namespace Linn.PrintService.Messaging.Handlers
             {
                 var body = message.DeserializeBody<PrintJobMessageBody>();
 
-                if (body?.PrinterUri is null || body.JobName is null)
+                if (body?.PrinterUri is null)
                 {
-                    throw new IppPrintingException("Missing printerUri or jobName in message body");
+                    throw new IppPrintingException("Missing printerUri in message body");
                 }
 
                 var printerUri = body.PrinterUri;
-                var jobName = body.JobName;
+                var jobName = body.JobName ?? "PrintJob";
                 var data = message.Body.ToArray();
 
                 this.log.Info($"[Handler] Processing print job: {jobName} for {printerUri}, {data.Length} bytes");
