@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <AssemblyName>Linn.PrintService.Domain.LinnApps</AssemblyName>
     <RootNamespace>Linn.PrintService.Domain.LinnApps</RootNamespace>
   </PropertyGroup>

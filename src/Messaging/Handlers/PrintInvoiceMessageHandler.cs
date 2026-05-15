@@ -5,6 +5,7 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
     using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
     public class PrintInvoiceMessageHandler : IMessageHandler
@@ -29,47 +30,40 @@ namespace Linn.PrintService.Messaging.Handlers
         {
             this.log.Info("[PrintInvoice] Received a message");
 
-            if (!message.TryGetHeaderAsString("documentNumber", out var documentNumberValue)
-                || !message.TryGetHeaderAsString("documentType", out var documentType)
-                || !message.TryGetHeaderAsString("printerUri", out var printerUri))
+            var body = message.DeserializeBody<PrintInvoiceMessageBody>();
+
+            if (body?.DocumentNumber is null || body.DocumentType is null || body.PrinterUri is null)
             {
                 throw new InvoicePrintMessageException(
-                    "Missing required header: documentNumber, documentType, or printerUri");
+                    "Missing required field in body: documentNumber, documentType, or printerUri");
             }
 
-            if (!int.TryParse(documentNumberValue, out var documentNumber))
+            if (!int.TryParse(body.DocumentNumber, out var documentNumber))
             {
                 throw new InvoicePrintMessageException(
-                    $"Invalid documentNumber header value: '{documentNumberValue}' is not a valid integer");
+                    $"Invalid documentNumber value: '{body.DocumentNumber}' is not a valid integer");
             }
 
-            message.TryGetHeaderAsBool("showTermsAndConditions", out var showTermsAndConditions);
-
-            var showPrices = !message.TryGetHeaderAsBool("showPrices", out var parsedShowPrices)
-                || parsedShowPrices;
-
-            var jobName = message.TryGetHeaderAsString("jobName", out var jobNameValue)
-                ? jobNameValue
-                : $"Invoice_{documentNumber}";
+            var jobName = body.JobName ?? $"Invoice_{documentNumber}";
 
             this.log.Info(
-                $"[PrintInvoice] Fetching PDF for {documentType} {documentNumber}, showTerms={showTermsAndConditions}, showPrices={showPrices}");
+                $"[PrintInvoice] Fetching PDF for {body.DocumentType} {documentNumber}, showTerms={body.ShowTermsAndConditions}, showPrices={body.ShowPrices}");
 
             var data = await this.invoicePrintProxy.GetInvoiceAsPdf(
-                documentType,
+                body.DocumentType,
                 documentNumber,
-                showTermsAndConditions,
-                showPrices);
+                body.ShowTermsAndConditions,
+                body.ShowPrices);
 
             if (data == null || data.Length == 0)
             {
                 throw new InvoicePrintMessageException(
-                    $"No PDF data returned for {documentType} {documentNumber}");
+                    $"No PDF data returned for {body.DocumentType} {documentNumber}");
             }
 
-            this.log.Info($"[PrintInvoice] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintInvoice] Received {data.Length} bytes, printing to {body.PrinterUri}");
 
-            await this.printingService.Print(printerUri, jobName, data);
+            await this.printingService.Print(body.PrinterUri, jobName, data);
 
             this.log.Info($"[PrintInvoice] Print job completed: {jobName}");
         }

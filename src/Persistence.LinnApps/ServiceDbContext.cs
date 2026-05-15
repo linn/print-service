@@ -7,7 +7,7 @@ namespace Linn.PrintService.Persistence.LinnApps
 
     public class ServiceDbContext : DbContext
     {
-        public DbSet<PrinterMapping> PrinterMappings { get; set; }
+        public DbSet<PrinterMapping> PrinterMappings { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

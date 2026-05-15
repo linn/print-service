@@ -5,6 +5,7 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
     using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
     public class PrintPackingListMessageHandler : IMessageHandler
@@ -29,22 +30,21 @@ namespace Linn.PrintService.Messaging.Handlers
         {
             this.log.Info("[PrintPackingList] Received a message");
 
-            if (!message.TryGetHeaderAsString("consignmentId", out var consignmentNumberValue)
-                || !message.TryGetHeaderAsString("printerUri", out var printerUri))
+            var body = message.DeserializeBody<PrintPackingListMessageBody>();
+
+            if (body?.ConsignmentId is null || body.PrinterUri is null)
             {
                 throw new PackingListPrintMessageException(
-                    "Missing required header: consignmentId or printerUri");
+                    "Missing required field in body: consignmentId or printerUri");
             }
 
-            if (!int.TryParse(consignmentNumberValue, out var consignmentNumber))
+            if (!int.TryParse(body.ConsignmentId, out var consignmentNumber))
             {
                 throw new PackingListPrintMessageException(
-                    $"Invalid consignmentNumber header value: '{consignmentNumberValue}' is not a valid integer");
+                    $"Invalid consignmentId value: '{body.ConsignmentId}' is not a valid integer");
             }
 
-            var jobName = message.TryGetHeaderAsString("jobName", out var jobNameValue)
-                ? jobNameValue
-                : $"PackingList_{consignmentNumber}";
+            var jobName = body.JobName ?? $"PackingList_{consignmentNumber}";
 
             this.log.Info($"[PrintPackingList] Fetching PDF for consignment {consignmentNumber}");
 
@@ -56,9 +56,9 @@ namespace Linn.PrintService.Messaging.Handlers
                     $"No PDF data returned for consignment {consignmentNumber}");
             }
 
-            this.log.Info($"[PrintPackingList] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintPackingList] Received {data.Length} bytes, printing to {body.PrinterUri}");
 
-            await this.printingService.Print(printerUri, jobName, data);
+            await this.printingService.Print(body.PrinterUri, jobName, data);
 
             this.log.Info($"[PrintPackingList] Print job completed: {jobName}");
         }

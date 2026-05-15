@@ -1,9 +1,9 @@
 namespace Linn.PrintService.Messaging.Handlers
 {
-    using System.Text;
-
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
     public class PrintJobMessageHandler : IMessageHandler
@@ -25,14 +25,15 @@ namespace Linn.PrintService.Messaging.Handlers
 
             try
             {
-                if (!message.Headers.TryGetValue("printerUri", out var printerUriObj) ||
-                    !message.Headers.TryGetValue("jobName", out var jobNameObj))
+                var body = message.DeserializeBody<PrintJobMessageBody>();
+
+                if (body?.PrinterUri is null || body.JobName is null)
                 {
-                    throw new IppPrintingException("Missing printerUri or jobName header");
+                    throw new IppPrintingException("Missing printerUri or jobName in message body");
                 }
 
-                var printerUri = Encoding.UTF8.GetString((byte[])printerUriObj);
-                var jobName = Encoding.UTF8.GetString((byte[])jobNameObj) ?? "PrintJob";
+                var printerUri = body.PrinterUri;
+                var jobName = body.JobName;
                 var data = message.Body.ToArray();
 
                 this.log.Info($"[Handler] Processing print job: {jobName} for {printerUri}, {data.Length} bytes");

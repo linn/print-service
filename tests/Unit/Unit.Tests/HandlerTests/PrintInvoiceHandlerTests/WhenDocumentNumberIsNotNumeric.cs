@@ -1,8 +1,8 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -22,15 +22,17 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
         [SetUp]
         public void SetUp()
         {
+            var bodyJson = JsonSerializer.Serialize(new
+            {
+                documentNumber = "not-a-number",
+                documentType = "I",
+                printerUri = "ipp://printer.local:631/ipp/print"
+            });
+
             var message = new Message
                               {
                                   RoutingKey = "print.invoice.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "documentNumber", Encoding.UTF8.GetBytes("not-a-number") },
-                                                    { "documentType", Encoding.UTF8.GetBytes("I") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
-                                                }
+                                  Body = Encoding.UTF8.GetBytes(bodyJson)
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);

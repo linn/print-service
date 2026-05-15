@@ -1,8 +1,8 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
     using System;
-    using System.Collections.Generic;
     using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -25,14 +25,16 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
             this.PackingListProxy.GetPackingListAsPdf(Arg.Any<int>())
                 .Returns(new byte[0]);
 
+            var bodyJson = JsonSerializer.Serialize(new
+            {
+                consignmentId = "67890",
+                printerUri = "ipp://printer.local:631/ipp/print"
+            });
+
             var message = new Message
                               {
                                   RoutingKey = "print.packing-list.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "consignmentId", Encoding.UTF8.GetBytes("67890") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
-                                                }
+                                  Body = Encoding.UTF8.GetBytes(bodyJson)
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);

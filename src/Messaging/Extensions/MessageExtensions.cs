@@ -1,33 +1,21 @@
 namespace Linn.PrintService.Messaging.Extensions
 {
     using System.Text;
+    using System.Text.Json;
 
     using Linn.Common.Messaging.RabbitMQ;
 
     public static class MessageExtensions
     {
-        public static bool TryGetHeaderAsString(this Message message, string key, out string value)
+        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
-            if (message.Headers.TryGetValue(key, out var obj))
-            {
-                value = Encoding.UTF8.GetString((byte[])obj);
-                return true;
-            }
+            PropertyNameCaseInsensitive = true
+        };
 
-            value = null;
-            return false;
-        }
-
-        public static bool TryGetHeaderAsBool(this Message message, string key, out bool value)
+        public static T? DeserializeBody<T>(this Message message) where T : class
         {
-            if (message.Headers.TryGetValue(key, out var obj))
-            {
-                var str = Encoding.UTF8.GetString((byte[])obj);
-                return bool.TryParse(str, out value);
-            }
-
-            value = false;
-            return false;
+            var json = Encoding.UTF8.GetString(message.Body.ToArray());
+            return JsonSerializer.Deserialize<T>(json, JsonOptions);
         }
     }
 }

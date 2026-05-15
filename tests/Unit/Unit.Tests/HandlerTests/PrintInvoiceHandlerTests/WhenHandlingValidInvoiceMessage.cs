@@ -3,6 +3,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -33,17 +34,19 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
             this.InvoicePrintProxy.GetInvoiceAsPdf(this.documentType, this.documentNumber, false, true)
                 .Returns(this.pdfData);
 
+            var bodyJson = JsonSerializer.Serialize(new
+            {
+                documentNumber = this.documentNumber.ToString(),
+                documentType = this.documentType,
+                showTermsAndConditions = false,
+                showPrices = true,
+                printerUri = this.printerUri
+            });
+
             var message = new Message
                               {
                                   RoutingKey = "print.invoice.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "documentNumber", Encoding.UTF8.GetBytes(this.documentNumber.ToString()) },
-                                                    { "documentType", Encoding.UTF8.GetBytes(this.documentType) },
-                                                    { "showTermsAndConditions", Encoding.UTF8.GetBytes("false") },
-                                                    { "showPrices", Encoding.UTF8.GetBytes("true") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes(this.printerUri) }
-                                                }
+                                  Body = Encoding.UTF8.GetBytes(bodyJson)
                               };
 
             await this.Handler.HandleAsync(message, CancellationToken.None);

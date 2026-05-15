@@ -2,6 +2,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -20,8 +21,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
             var message = new Message
                               {
                                   RoutingKey = "print.job",
-                                  Body = new byte[] { 1, 2, 3 },
-                                  Headers = new Dictionary<string, object>()
+                                  Body = Encoding.UTF8.GetBytes("{}")
                               };
 
             await this.Handler.HandleAsync(message, CancellationToken.None);

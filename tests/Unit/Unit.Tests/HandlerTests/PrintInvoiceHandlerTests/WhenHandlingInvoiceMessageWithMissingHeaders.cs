@@ -1,7 +1,7 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
-    using System.Collections.Generic;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -24,7 +24,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
             var message = new Message
                               {
                                   RoutingKey = "print.invoice.document",
-                                  Headers = new Dictionary<string, object>()
+                                  Body = Encoding.UTF8.GetBytes("{}")
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
@@ -34,7 +34,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
         public async Task ShouldThrowInvoicePrintMessageException()
         {
             await this.action.Should().ThrowAsync<InvoicePrintMessageException>()
-                .WithMessage("*Missing required header*");
+                .WithMessage("*Missing required field*");
         }
 
         [Test]

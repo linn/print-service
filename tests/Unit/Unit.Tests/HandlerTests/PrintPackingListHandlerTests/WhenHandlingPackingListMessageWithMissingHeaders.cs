@@ -1,7 +1,7 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
     using System;
-    using System.Collections.Generic;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -24,7 +24,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
             var message = new Message
                               {
                                   RoutingKey = "print.packing-list.document",
-                                  Headers = new Dictionary<string, object>()
+                                  Body = Encoding.UTF8.GetBytes("{}")
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
@@ -34,7 +34,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
         public async Task ShouldThrowRsnPrintMessageException()
         {
             await this.action.Should().ThrowAsync<PackingListPrintMessageException>()
-                .WithMessage("*Missing required header*");
+                .WithMessage("*Missing required field*");
         }
 
         [Test]
