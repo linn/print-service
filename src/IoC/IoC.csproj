@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Linn.PrintService.IoC</RootNamespace>
@@ -9,17 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3" />
-    <PackageReference Include="AWSSDK.SQS" Version="4.0.1.2" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.38" />
+    <PackageReference Include="AWSSDK.SQS" Version="4.0.2.29" />
     <PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
     <PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
     <PackageReference Include="Linn.Common.Logging.AmazonSqs" Version="3.0.0" />
-  </ItemGroup>
+    <PackageReference Include="Linn.Common.Service" Version="3.0.0" />
+    </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Messaging\Messaging.csproj" />
+    <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
+    <ProjectReference Include="..\Facade\Facade.csproj" />
+    <ProjectReference Include="..\Persistence.LinnApps\Persistence.LinnApps.csproj" />
     <ProjectReference Include="..\Printing\Printing.csproj" />
     <ProjectReference Include="..\Proxy\Proxy.csproj" />
+    <ProjectReference Include="..\Resources\Resources.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 

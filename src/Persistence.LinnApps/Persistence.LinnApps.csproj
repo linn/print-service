@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Linn.PrintService.Persistence.LinnApps</RootNamespace>
+    <AssemblyName>Linn.PrintService.Persistence.LinnApps</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linn.Common.Persistence.EntityFramework" Version="6.0.0" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -4,8 +4,9 @@ namespace Linn.PrintService.Service.Host
     using Linn.Common.Service;
     using Linn.Common.Service.Extensions;
     using Linn.PrintService.IoC;
+    using Linn.PrintService.Persistence.LinnApps;
 
-    using Linn.PrintService.Printing.Exceptions;
+    using Linn.PrintService.Printing;
     using Linn.PrintService.Service.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -38,6 +39,10 @@ namespace Linn.PrintService.Service.Host
             services.AddLog();
 
             services.AddServices();
+            services.AddFacadeServices();
+            services.AddBuilders();
+            services.AddPersistence();
+            services.AddHandlers();
 
             services.AddAuthorization();
 

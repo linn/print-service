@@ -10,7 +10,11 @@
     "Service.Host": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PRINT_USERNAME": "ipp-print-service@linn.co.uk",
+        "PRINT_PASSWORD": "bBHjJIqqgrKz8oklIDvH",
+        "PROXY_ROOT": "https://app-sys.linn.co.uk",
+        "APP_ROOT": "https://app-sys.linn.co.uk"
       },
       "applicationUrl": "http://localhost:5050/"
     }

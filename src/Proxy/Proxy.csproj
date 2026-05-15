@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Linn.PrintService.Proxy</RootNamespace>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Printing\Printing.csproj" />
+    <ProjectReference Include="..\Domain.LinnApps\Domain.LinnApps.csproj" />
   </ItemGroup>
 
 </Project>

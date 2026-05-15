@@ -5,7 +5,7 @@ namespace Linn.PrintService.Proxy
     using System.Threading.Tasks;
 
     using Linn.Common.Configuration;
-    using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Domain.LinnApps.Services;
 
     public class PackingListProxy : IPackingListProxy
     {

@@ -2,9 +2,10 @@ namespace Linn.PrintService.Messaging.Handlers
 {
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
     using Linn.PrintService.Messaging.Extensions;
-    using Linn.PrintService.Printing.Services;
+    using Linn.PrintService.Printing;
 
     public class PrintRsnDocumentMessageHandler : IMessageHandler
     {

@@ -1,4 +1,4 @@
-﻿namespace Linn.PrintService.Integration.Tests
+namespace Linn.PrintService.Integration.Tests
 {
     using System;
     using Microsoft.Extensions.DependencyInjection;
