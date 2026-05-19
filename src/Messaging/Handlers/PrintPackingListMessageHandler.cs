@@ -4,11 +4,10 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
-    using Linn.PrintService.Messaging.Extensions;
     using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
-    public class PrintPackingListMessageHandler : IMessageHandler
+    public class PrintPackingListMessageHandler : JsonMessageHandler<PrintPackingListMessageBody>
     {
         private readonly IPackingListProxy packingListProxy;
         private readonly IIppPrintingService printingService;
@@ -24,15 +23,16 @@ namespace Linn.PrintService.Messaging.Handlers
             this.log = log;
         }
 
-        public string RoutingKey { get; } = "print.packing-list.document";
+        public override string RoutingKey { get; } = "print.packing-list.document";
 
-        public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+        protected override async Task HandleAsync(
+            PrintPackingListMessageBody body,
+            IReadOnlyDictionary<string, object> headers,
+            CancellationToken cancellationToken)
         {
             this.log.Info("[PrintPackingList] Received a message");
 
-            var body = message.DeserializeBody<PrintPackingListMessageBody>();
-
-            if (body?.ConsignmentId is null || body.PrinterUri is null)
+            if (body.ConsignmentId is null || body.PrinterUri is null)
             {
                 throw new PackingListPrintMessageException(
                     "Missing required field in body: consignmentId or printerUri");

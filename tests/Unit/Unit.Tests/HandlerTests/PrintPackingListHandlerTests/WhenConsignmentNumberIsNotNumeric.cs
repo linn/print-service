@@ -10,6 +10,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -22,10 +23,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintPackingListMessageBody
             {
-                consignmentId = "not-a-number",
-                printerUri = "ipp://printer.local:631/ipp/print"
+                ConsignmentId = "not-a-number",
+                PrinterUri = "ipp://printer.local:631/ipp/print"
             });
 
             var message = new Message

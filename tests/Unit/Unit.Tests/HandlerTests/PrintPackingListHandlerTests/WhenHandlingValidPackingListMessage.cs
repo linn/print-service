@@ -7,6 +7,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
     using System.Threading.Tasks;
 
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -30,10 +31,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
             this.PackingListProxy.GetPackingListAsPdf(this.consignmentNumber)
                 .Returns(this.pdfData);
 
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintPackingListMessageBody
             {
-                consignmentId = this.consignmentNumber.ToString(),
-                printerUri = this.printerUri
+                ConsignmentId = this.consignmentNumber.ToString(),
+                PrinterUri = this.printerUri
             });
 
             var message = new Message

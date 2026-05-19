@@ -7,6 +7,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
     using System.Threading.Tasks;
 
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -36,12 +37,12 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy.GetRsnAsPdf(this.rsnNumber, this.copyType, this.facilityCode)
                 .Returns(this.pdfData);
 
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintRsnDocumentMessageBody
             {
-                rsnNumber = this.rsnNumber.ToString(),
-                copyType = this.copyType,
-                facilityCode = this.facilityCode,
-                printerUri = this.printerUri
+                RsnNumber = this.rsnNumber.ToString(),
+                CopyType = this.copyType,
+                FacilityCode = this.facilityCode,
+                PrinterUri = this.printerUri
             });
 
             var message = new Message

@@ -10,6 +10,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -22,11 +23,11 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintInvoiceMessageBody
             {
-                documentNumber = "not-a-number",
-                documentType = "I",
-                printerUri = "ipp://printer.local:631/ipp/print"
+                DocumentNumber = "not-a-number",
+                DocumentType = "I",
+                PrinterUri = "ipp://printer.local:631/ipp/print"
             });
 
             var message = new Message

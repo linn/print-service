@@ -1,6 +1,5 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.Json;
@@ -8,6 +7,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
     using System.Threading.Tasks;
 
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -34,13 +34,13 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
             this.InvoicePrintProxy.GetInvoiceAsPdf(this.documentType, this.documentNumber, false, true)
                 .Returns(this.pdfData);
 
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintInvoiceMessageBody
             {
-                documentNumber = this.documentNumber.ToString(),
-                documentType = this.documentType,
-                showTermsAndConditions = false,
-                showPrices = true,
-                printerUri = this.printerUri
+                DocumentNumber = this.documentNumber.ToString(),
+                DocumentType = this.documentType,
+                ShowTermsAndConditions = false,
+                ShowPrices = true,
+                PrinterUri = this.printerUri
             });
 
             var message = new Message

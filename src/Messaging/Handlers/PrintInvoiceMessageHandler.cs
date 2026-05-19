@@ -4,11 +4,10 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
-    using Linn.PrintService.Messaging.Extensions;
     using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
-    public class PrintInvoiceMessageHandler : IMessageHandler
+    public class PrintInvoiceMessageHandler : JsonMessageHandler<PrintInvoiceMessageBody>
     {
         private readonly IInvoicePrintProxy invoicePrintProxy;
         private readonly IIppPrintingService printingService;
@@ -24,15 +23,16 @@ namespace Linn.PrintService.Messaging.Handlers
             this.log = log;
         }
 
-        public string RoutingKey { get; } = "print.invoice.document";
+        public override string RoutingKey { get; } = "print.invoice.document";
 
-        public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+        protected override async Task HandleAsync(
+            PrintInvoiceMessageBody body,
+            IReadOnlyDictionary<string, object> headers,
+            CancellationToken cancellationToken)
         {
             this.log.Info("[PrintInvoice] Received a message");
 
-            var body = message.DeserializeBody<PrintInvoiceMessageBody>();
-
-            if (body?.DocumentNumber is null || body.DocumentType is null || body.PrinterUri is null)
+            if (body.DocumentNumber is null || body.DocumentType is null || body.PrinterUri is null)
             {
                 throw new InvoicePrintMessageException(
                     "Missing required field in body: documentNumber, documentType, or printerUri");

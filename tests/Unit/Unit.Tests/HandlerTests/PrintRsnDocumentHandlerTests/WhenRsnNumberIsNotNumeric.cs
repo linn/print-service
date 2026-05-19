@@ -10,6 +10,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -22,12 +23,12 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintRsnDocumentMessageBody
             {
-                rsnNumber = "not-a-number",
-                copyType = "service",
-                facilityCode = "FC001",
-                printerUri = "ipp://printer.local:631/ipp/print"
+                RsnNumber = "not-a-number",
+                CopyType = "service",
+                FacilityCode = "FC001",
+                PrinterUri = "ipp://printer.local:631/ipp/print"
             });
 
             var message = new Message

@@ -1,12 +1,12 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
-    using System.Linq;
     using System.Text;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -14,8 +14,6 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 
     public class WhenHandlingValidPrintJobMessage : ContextBase
     {
-        private byte[] pdfData;
-
         private string printerUri;
 
         private string jobName;
@@ -23,14 +21,14 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
         [SetUp]
         public async Task SetUp()
         {
-            this.pdfData = new byte[] { 1, 2, 3, 4, 5 };
             this.printerUri = "ipp://printer.local:631/ipp/print";
             this.jobName = "TestJob";
 
-            var bodyJson = JsonSerializer.Serialize(new
+            var bodyJson = JsonSerializer.Serialize(new PrintJobMessageBody
             {
-                printerUri = this.printerUri,
-                jobName = this.jobName
+                PrinterUri = this.printerUri,
+                JobName = this.jobName,
+                Data = new byte[] { 1, 2, 3, 4, 5 }
             });
 
             var message = new Message
@@ -45,10 +43,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
         [Test]
         public void ShouldCallPrintService()
         {
-            this.PrintingService.Received(1).Print(
-                this.printerUri,
-                this.jobName,
-                Arg.Any<byte[]>());
+            this.PrintingService.Received(1).Print(this.printerUri, this.jobName, Arg.Any<byte[]>());
         }
     }
 }
