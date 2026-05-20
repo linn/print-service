@@ -144,7 +144,7 @@ Resources:
               awslogs-stream-prefix: !Ref AWS::StackName
           Environment:
             - Name: DATABASE_HOST
-               Value: !Ref databaseHost
+              Value: !Ref databaseHost
             - Name: DATABASE_NAME
               Value: !Ref databaseName
             - Name: DATABASE_USER_ID
