@@ -2,11 +2,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -36,19 +35,16 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy.GetRsnAsPdf(this.rsnNumber, this.copyType, this.facilityCode)
                 .Returns(this.pdfData);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.rsn.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "rsnNumber", Encoding.UTF8.GetBytes(this.rsnNumber.ToString()) },
-                                                    { "copyType", Encoding.UTF8.GetBytes(this.copyType) },
-                                                    { "facilityCode", Encoding.UTF8.GetBytes(this.facilityCode) },
-                                                    { "printerUri", Encoding.UTF8.GetBytes(this.printerUri) }
-                                                }
-                              };
-
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            await this.Handler.HandleAsync(
+                new PrintRsnDocumentMessageBody
+                    {
+                        RsnNumber = this.rsnNumber,
+                        CopyType = this.copyType,
+                        FacilityCode = this.facilityCode,
+                        PrinterUri = this.printerUri
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

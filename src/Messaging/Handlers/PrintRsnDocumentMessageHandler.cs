@@ -4,10 +4,10 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
-    using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
-    public class PrintRsnDocumentMessageHandler : IMessageHandler
+    public class PrintRsnDocumentMessageHandler : JsonMessageHandler<PrintRsnDocumentMessageBody>
     {
         private readonly IRsnPrintProxy rsnPrintProxy;
         private readonly IIppPrintingService printingService;
@@ -23,44 +23,36 @@ namespace Linn.PrintService.Messaging.Handlers
             this.log = log;
         }
 
-        public string RoutingKey { get; } = "print.rsn.document";
+        public override string RoutingKey { get; } = "print.rsn.document";
 
-        public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+        public override async Task HandleAsync(
+            PrintRsnDocumentMessageBody body,
+            IReadOnlyDictionary<string, object> headers,
+            CancellationToken cancellationToken)
         {
             this.log.Info("[PrintRsnDocument] Received a message");
 
-            if (!message.TryGetHeaderAsString("rsnNumber", out var rsnNumber)
-                || !message.TryGetHeaderAsString("copyType", out var copyType)
-                || !message.TryGetHeaderAsString("facilityCode", out var facilityCode)
-                || !message.TryGetHeaderAsString("printerUri", out var printerUri))
+            if (body.RsnNumber == 0 || body.CopyType is null || body.FacilityCode is null || body.PrinterUri is null)
             {
                 throw new RsnPrintMessageException(
-                    "Missing required header: rsnNumber, copyType, facilityCode, or printerUri");
+                    "Missing required field in body: rsnNumber, copyType, facilityCode, or printerUri");
             }
 
-            if (!int.TryParse(rsnNumber, out var parsedRsnNumber))
-            {
-                throw new RsnPrintMessageException(
-                    $"Invalid rsnNumber header value: '{rsnNumber}' is not a valid integer");
-            }
-
-            var jobName = message.TryGetHeaderAsString("jobName", out var jobNameValue)
-                ? jobNameValue
-                : $"RSN{rsnNumber}";
+            var jobName = body.JobName ?? $"RSN{body.RsnNumber}";
 
             this.log.Info(
-                $"[PrintRsnDocument] Fetching PDF for RSN {rsnNumber}, copyType={copyType}, facilityCode={facilityCode}");
+                $"[PrintRsnDocument] Fetching PDF for RSN {body.RsnNumber}, copyType={body.CopyType}, facilityCode={body.FacilityCode}");
 
-            var data = await this.rsnPrintProxy.GetRsnAsPdf(parsedRsnNumber, copyType, facilityCode);
+            var data = await this.rsnPrintProxy.GetRsnAsPdf(body.RsnNumber, body.CopyType, body.FacilityCode);
 
             if (data == null || data.Length == 0)
             {
-                throw new RsnPrintMessageException($"No PDF data returned for RSN {rsnNumber}");
+                throw new RsnPrintMessageException($"No PDF data returned for RSN {body.RsnNumber}");
             }
 
-            this.log.Info($"[PrintRsnDocument] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintRsnDocument] Received {data.Length} bytes, printing to {body.PrinterUri}");
 
-            await this.printingService.Print(printerUri, jobName, data);
+            await this.printingService.Print(body.PrinterUri, jobName, data);
 
             this.log.Info($"[PrintRsnDocument] Print job completed: {jobName}");
         }

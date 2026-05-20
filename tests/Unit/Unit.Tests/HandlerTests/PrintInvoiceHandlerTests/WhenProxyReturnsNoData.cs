@@ -2,14 +2,13 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -29,20 +28,17 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
                     Arg.Any<bool>())
                 .Returns(new byte[0]);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.invoice.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "documentNumber", Encoding.UTF8.GetBytes("12345") },
-                                                    { "documentType", Encoding.UTF8.GetBytes("I") },
-                                                    { "showTermsAndConditions", Encoding.UTF8.GetBytes("false") },
-                                                    { "showPrices", Encoding.UTF8.GetBytes("true") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
-                                                }
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintInvoiceMessageBody
+                    {
+                        DocumentNumber = 12345,
+                        DocumentType = "I",
+                        ShowTermsAndConditions = false,
+                        ShowPrices = true,
+                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

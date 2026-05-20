@@ -4,10 +4,10 @@ namespace Linn.PrintService.Messaging.Handlers
     using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
-    using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
-    public class PrintInvoiceMessageHandler : IMessageHandler
+    public class PrintInvoiceMessageHandler : JsonMessageHandler<PrintInvoiceMessageBody>
     {
         private readonly IInvoicePrintProxy invoicePrintProxy;
         private readonly IIppPrintingService printingService;
@@ -23,53 +23,41 @@ namespace Linn.PrintService.Messaging.Handlers
             this.log = log;
         }
 
-        public string RoutingKey { get; } = "print.invoice.document";
+        public override string RoutingKey { get; } = "print.invoice.document";
 
-        public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+        public override async Task HandleAsync(
+            PrintInvoiceMessageBody body,
+            IReadOnlyDictionary<string, object> headers,
+            CancellationToken cancellationToken)
         {
             this.log.Info("[PrintInvoice] Received a message");
 
-            if (!message.TryGetHeaderAsString("documentNumber", out var documentNumberValue)
-                || !message.TryGetHeaderAsString("documentType", out var documentType)
-                || !message.TryGetHeaderAsString("printerUri", out var printerUri))
+            if (body.DocumentNumber == 0 || body.DocumentType is null || body.PrinterUri is null)
             {
                 throw new InvoicePrintMessageException(
-                    "Missing required header: documentNumber, documentType, or printerUri");
+                    "Missing required field in body: documentNumber, documentType, or printerUri");
             }
 
-            if (!int.TryParse(documentNumberValue, out var documentNumber))
-            {
-                throw new InvoicePrintMessageException(
-                    $"Invalid documentNumber header value: '{documentNumberValue}' is not a valid integer");
-            }
-
-            message.TryGetHeaderAsBool("showTermsAndConditions", out var showTermsAndConditions);
-
-            var showPrices = !message.TryGetHeaderAsBool("showPrices", out var parsedShowPrices)
-                || parsedShowPrices;
-
-            var jobName = message.TryGetHeaderAsString("jobName", out var jobNameValue)
-                ? jobNameValue
-                : $"Invoice_{documentNumber}";
+            var jobName = body.JobName ?? $"Invoice_{body.DocumentNumber}";
 
             this.log.Info(
-                $"[PrintInvoice] Fetching PDF for {documentType} {documentNumber}, showTerms={showTermsAndConditions}, showPrices={showPrices}");
+                $"[PrintInvoice] Fetching PDF for {body.DocumentType} {body.DocumentNumber}, showTerms={body.ShowTermsAndConditions}, showPrices={body.ShowPrices}");
 
             var data = await this.invoicePrintProxy.GetInvoiceAsPdf(
-                documentType,
-                documentNumber,
-                showTermsAndConditions,
-                showPrices);
+                body.DocumentType,
+                body.DocumentNumber,
+                body.ShowTermsAndConditions,
+                body.ShowPrices);
 
             if (data == null || data.Length == 0)
             {
                 throw new InvoicePrintMessageException(
-                    $"No PDF data returned for {documentType} {documentNumber}");
+                    $"No PDF data returned for {body.DocumentType} {body.DocumentNumber}");
             }
 
-            this.log.Info($"[PrintInvoice] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintInvoice] Received {data.Length} bytes, printing to {body.PrinterUri}");
 
-            await this.printingService.Print(printerUri, jobName, data);
+            await this.printingService.Print(body.PrinterUri, jobName, data);
 
             this.log.Info($"[PrintInvoice] Print job completed: {jobName}");
         }

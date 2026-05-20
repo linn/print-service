@@ -2,14 +2,13 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -25,19 +24,16 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy.GetRsnAsPdf(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new byte[0]);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.rsn.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "rsnNumber", Encoding.UTF8.GetBytes("12345") },
-                                                    { "copyType", Encoding.UTF8.GetBytes("original") },
-                                                    { "facilityCode", Encoding.UTF8.GetBytes("FC001") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
-                                                }
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintRsnDocumentMessageBody
+                    {
+                        RsnNumber = 12345,
+                        CopyType = "service",
+                        FacilityCode = "FC001",
+                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

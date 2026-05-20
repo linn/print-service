@@ -18,7 +18,7 @@ namespace Linn.PrintService.Printing
 
         public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
         {
-            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data?.Length ?? 0}");
+            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data.Length}");
 
             if (string.IsNullOrWhiteSpace(printerUri))
             {
@@ -168,7 +168,7 @@ namespace Linn.PrintService.Printing
 
         private async Task<PrintResult> SendIppRequest(string uri, byte[] ippPayload)
         {
-            this.log.Info($"Sending IPP request to {uri} with payload length {ippPayload?.Length ?? 0}");
+            this.log.Info($"Sending IPP request to {uri} with payload length {ippPayload.Length}");
 
             try
             {

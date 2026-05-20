@@ -7,8 +7,8 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -21,20 +21,17 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var message = new Message
-                              {
-                                  RoutingKey = "print.rsn.document",
-                                  Headers = new Dictionary<string, object>()
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintRsnDocumentMessageBody(),
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]
         public async Task ShouldThrowRsnPrintMessageException()
         {
             await this.action.Should().ThrowAsync<RsnPrintMessageException>()
-                .WithMessage("*Missing required header*");
+                .WithMessage("*Missing required field*");
         }
 
         [Test]
