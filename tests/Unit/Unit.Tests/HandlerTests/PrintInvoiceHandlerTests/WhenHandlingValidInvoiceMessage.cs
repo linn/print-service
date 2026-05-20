@@ -1,11 +1,10 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
@@ -33,20 +32,17 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
             this.InvoicePrintProxy.GetInvoiceAsPdf(this.documentType, this.documentNumber, false, true)
                 .Returns(this.pdfData);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.invoice.document",
-                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintInvoiceMessageBody
-                                             {
-                                                 DocumentNumber = this.documentNumber,
-                                                 DocumentType = this.documentType,
-                                                 ShowTermsAndConditions = false,
-                                                 ShowPrices = true,
-                                                 PrinterUri = this.printerUri
-                                             })
-                              };
-
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            await this.Handler.HandleAsync(
+                new PrintInvoiceMessageBody
+                    {
+                        DocumentNumber = this.documentNumber,
+                        DocumentType = this.documentType,
+                        ShowTermsAndConditions = false,
+                        ShowPrices = true,
+                        PrinterUri = this.printerUri
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

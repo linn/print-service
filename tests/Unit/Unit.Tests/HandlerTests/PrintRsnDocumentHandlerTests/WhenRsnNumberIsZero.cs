@@ -1,13 +1,12 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
-    using System.Text.Json;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
     using Linn.PrintService.Messaging.Models;
 
@@ -22,19 +21,16 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var message = new Message
-                              {
-                                  RoutingKey = "print.rsn.document",
-                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintRsnDocumentMessageBody
-                                             {
-                                                 RsnNumber = 0,
-                                                 CopyType = "service",
-                                                 FacilityCode = "FC001",
-                                                 PrinterUri = "ipp://printer.local:631/ipp/print"
-                                             })
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintRsnDocumentMessageBody
+                    {
+                        RsnNumber = 0,
+                        CopyType = "service",
+                        FacilityCode = "FC001",
+                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

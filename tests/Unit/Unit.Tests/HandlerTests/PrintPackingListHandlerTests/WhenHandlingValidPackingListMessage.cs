@@ -1,11 +1,10 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
@@ -30,17 +29,14 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
             this.PackingListProxy.GetPackingListAsPdf(this.consignmentNumber)
                 .Returns(this.pdfData);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.packing-list.document",
-                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintPackingListMessageBody
-                                             {
-                                                 ConsignmentId = this.consignmentNumber,
-                                                 PrinterUri = this.printerUri
-                                             })
-                              };
-
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            await this.Handler.HandleAsync(
+                new PrintPackingListMessageBody
+                    {
+                        ConsignmentId = this.consignmentNumber,
+                        PrinterUri = this.printerUri
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

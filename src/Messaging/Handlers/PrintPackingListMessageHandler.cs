@@ -25,7 +25,7 @@ namespace Linn.PrintService.Messaging.Handlers
 
         public override string RoutingKey { get; } = "print.packing-list.document";
 
-        protected override async Task HandleAsync(
+        public override async Task HandleAsync(
             PrintPackingListMessageBody body,
             IReadOnlyDictionary<string, object> headers,
             CancellationToken cancellationToken)

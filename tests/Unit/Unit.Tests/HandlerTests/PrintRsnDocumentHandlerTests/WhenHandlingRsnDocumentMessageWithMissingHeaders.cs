@@ -1,14 +1,14 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
-    using System.Text.Json;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -21,13 +21,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var message = new Message
-                              {
-                                  RoutingKey = "print.rsn.document",
-                                  Body = JsonSerializer.SerializeToUtf8Bytes(new { })
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintRsnDocumentMessageBody(),
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

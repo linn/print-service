@@ -25,7 +25,7 @@ namespace Linn.PrintService.Messaging.Handlers
 
         public override string RoutingKey { get; } = "print.invoice.document";
 
-        protected override async Task HandleAsync(
+        public override async Task HandleAsync(
             PrintInvoiceMessageBody body,
             IReadOnlyDictionary<string, object> headers,
             CancellationToken cancellationToken)

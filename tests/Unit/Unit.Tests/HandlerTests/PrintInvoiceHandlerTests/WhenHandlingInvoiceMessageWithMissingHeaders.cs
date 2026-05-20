@@ -1,14 +1,14 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
-    using System.Text.Json;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -21,13 +21,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var message = new Message
-                              {
-                                  RoutingKey = "print.invoice.document",
-                                  Body = JsonSerializer.SerializeToUtf8Bytes(new { })
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintInvoiceMessageBody(),
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

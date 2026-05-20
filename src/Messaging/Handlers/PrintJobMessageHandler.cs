@@ -18,7 +18,7 @@ namespace Linn.PrintService.Messaging.Handlers
 
         public override string RoutingKey { get; } = "print.job";
 
-        protected override async Task HandleAsync(
+        public override async Task HandleAsync(
             PrintJobMessageBody body,
             IReadOnlyDictionary<string, object> headers,
             CancellationToken cancellationToken)

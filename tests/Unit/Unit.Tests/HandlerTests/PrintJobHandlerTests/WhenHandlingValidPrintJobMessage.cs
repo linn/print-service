@@ -1,10 +1,9 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
-    using System.Text.Json;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
@@ -23,18 +22,15 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
             this.printerUri = "ipp://printer.local:631/ipp/print";
             this.jobName = "TestJob";
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.job",
-                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintJobMessageBody
-                                             {
-                                                 PrinterUri = this.printerUri,
-                                                 JobName = this.jobName,
-                                                 Data = new byte[] { 1, 2, 3, 4, 5 }
-                                             })
-                              };
-
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            await this.Handler.HandleAsync(
+                new PrintJobMessageBody
+                    {
+                        PrinterUri = this.printerUri,
+                        JobName = this.jobName,
+                        Data = new byte[] { 1, 2, 3, 4, 5 }
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]
