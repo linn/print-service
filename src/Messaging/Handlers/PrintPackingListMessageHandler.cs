@@ -35,7 +35,7 @@ namespace Linn.PrintService.Messaging.Handlers
             if (body.ConsignmentId == 0 || body.PrinterUri is null)
             {
                 throw new PackingListPrintMessageException(
-                    "Missing required field in body: consignmentId or printerUri");
+                    "Missing required field in body:consignmentId or printerUri");
             }
 
             var jobName = body.JobName ?? $"PackingList_{body.ConsignmentId}";
