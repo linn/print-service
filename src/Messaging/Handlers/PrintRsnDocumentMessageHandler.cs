@@ -32,16 +32,10 @@ namespace Linn.PrintService.Messaging.Handlers
         {
             this.log.Info("[PrintRsnDocument] Received a message");
 
-            if (body.RsnNumber is null || body.CopyType is null || body.FacilityCode is null || body.PrinterUri is null)
+            if (body.RsnNumber == 0 || body.CopyType is null || body.FacilityCode is null || body.PrinterUri is null)
             {
                 throw new RsnPrintMessageException(
                     "Missing required field in body: rsnNumber, copyType, facilityCode, or printerUri");
-            }
-
-            if (!int.TryParse(body.RsnNumber, out var parsedRsnNumber))
-            {
-                throw new RsnPrintMessageException(
-                    $"Invalid rsnNumber value: '{body.RsnNumber}' is not a valid integer");
             }
 
             var jobName = body.JobName ?? $"RSN{body.RsnNumber}";
@@ -49,7 +43,7 @@ namespace Linn.PrintService.Messaging.Handlers
             this.log.Info(
                 $"[PrintRsnDocument] Fetching PDF for RSN {body.RsnNumber}, copyType={body.CopyType}, facilityCode={body.FacilityCode}");
 
-            var data = await this.rsnPrintProxy.GetRsnAsPdf(parsedRsnNumber, body.CopyType, body.FacilityCode);
+            var data = await this.rsnPrintProxy.GetRsnAsPdf(body.RsnNumber, body.CopyType, body.FacilityCode);
 
             if (data == null || data.Length == 0)
             {

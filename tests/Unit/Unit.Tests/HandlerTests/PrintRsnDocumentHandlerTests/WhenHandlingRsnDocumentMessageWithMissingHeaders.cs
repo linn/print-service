@@ -1,7 +1,7 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
-    using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -24,7 +24,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             var message = new Message
                               {
                                   RoutingKey = "print.rsn.document",
-                                  Body = Encoding.UTF8.GetBytes("{}")
+                                  Body = JsonSerializer.SerializeToUtf8Bytes(new { })
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);

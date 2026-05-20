@@ -1,7 +1,6 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
-    using System.Text;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
@@ -26,18 +25,16 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy.GetRsnAsPdf(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new byte[0]);
 
-            var bodyJson = JsonSerializer.Serialize(new PrintRsnDocumentMessageBody
-            {
-                RsnNumber = "12345",
-                CopyType = "service",
-                FacilityCode = "FC001",
-                PrinterUri = "ipp://printer.local:631/ipp/print"
-            });
-
             var message = new Message
                               {
                                   RoutingKey = "print.rsn.document",
-                                  Body = Encoding.UTF8.GetBytes(bodyJson)
+                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintRsnDocumentMessageBody
+                                             {
+                                                 RsnNumber = 12345,
+                                                 CopyType = "service",
+                                                 FacilityCode = "FC001",
+                                                 PrinterUri = "ipp://printer.local:631/ipp/print"
+                                             })
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);

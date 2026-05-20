@@ -2,7 +2,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -21,7 +21,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
             var message = new Message
                               {
                                   RoutingKey = "print.job",
-                                  Body = Encoding.UTF8.GetBytes("{}")
+                                  Body = JsonSerializer.SerializeToUtf8Bytes(new { })
                               };
 
             await this.Handler.HandleAsync(message, CancellationToken.None);

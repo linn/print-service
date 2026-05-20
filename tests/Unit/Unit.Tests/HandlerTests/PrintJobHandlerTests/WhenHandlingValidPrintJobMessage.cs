@@ -1,6 +1,5 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
 {
-    using System.Text;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
@@ -24,17 +23,15 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
             this.printerUri = "ipp://printer.local:631/ipp/print";
             this.jobName = "TestJob";
 
-            var bodyJson = JsonSerializer.Serialize(new PrintJobMessageBody
-            {
-                PrinterUri = this.printerUri,
-                JobName = this.jobName,
-                Data = new byte[] { 1, 2, 3, 4, 5 }
-            });
-
             var message = new Message
                               {
                                   RoutingKey = "print.job",
-                                  Body = Encoding.UTF8.GetBytes(bodyJson)
+                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintJobMessageBody
+                                             {
+                                                 PrinterUri = this.printerUri,
+                                                 JobName = this.jobName,
+                                                 Data = new byte[] { 1, 2, 3, 4, 5 }
+                                             })
                               };
 
             await this.Handler.HandleAsync(message, CancellationToken.None);

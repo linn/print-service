@@ -1,7 +1,6 @@
-namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
     using System;
-    using System.Text;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
@@ -16,44 +15,37 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 
     using NUnit.Framework;
 
-    public class WhenDocumentNumberIsNotNumeric : ContextBase
+    public class WhenConsignmentIdIsZero : ContextBase
     {
         private Func<Task> action;
 
         [SetUp]
         public void SetUp()
         {
-            var bodyJson = JsonSerializer.Serialize(new PrintInvoiceMessageBody
-            {
-                DocumentNumber = "not-a-number",
-                DocumentType = "I",
-                PrinterUri = "ipp://printer.local:631/ipp/print"
-            });
-
             var message = new Message
                               {
-                                  RoutingKey = "print.invoice.document",
-                                  Body = Encoding.UTF8.GetBytes(bodyJson)
+                                  RoutingKey = "print.packing-list.document",
+                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintPackingListMessageBody
+                                             {
+                                                 ConsignmentId = 0,
+                                                 PrinterUri = "ipp://printer.local:631/ipp/print"
+                                             })
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
         }
 
         [Test]
-        public async Task ShouldThrowInvoicePrintMessageException()
+        public async Task ShouldThrowPackingListPrintMessageException()
         {
-            await this.action.Should().ThrowAsync<InvoicePrintMessageException>()
-                .WithMessage("*not-a-number*");
+            await this.action.Should().ThrowAsync<PackingListPrintMessageException>()
+                .WithMessage("*Missing required field*");
         }
 
         [Test]
         public void ShouldNotCallProxy()
         {
-            this.InvoicePrintProxy.DidNotReceive().GetInvoiceAsPdf(
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<bool>(),
-                Arg.Any<bool>());
+            this.PackingListProxy.DidNotReceive().GetPackingListAsPdf(Arg.Any<int>());
         }
 
         [Test]

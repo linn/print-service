@@ -32,33 +32,27 @@ namespace Linn.PrintService.Messaging.Handlers
         {
             this.log.Info("[PrintInvoice] Received a message");
 
-            if (body.DocumentNumber is null || body.DocumentType is null || body.PrinterUri is null)
+            if (body.DocumentNumber == 0 || body.DocumentType is null || body.PrinterUri is null)
             {
                 throw new InvoicePrintMessageException(
                     "Missing required field in body: documentNumber, documentType, or printerUri");
             }
 
-            if (!int.TryParse(body.DocumentNumber, out var documentNumber))
-            {
-                throw new InvoicePrintMessageException(
-                    $"Invalid documentNumber value: '{body.DocumentNumber}' is not a valid integer");
-            }
-
-            var jobName = body.JobName ?? $"Invoice_{documentNumber}";
+            var jobName = body.JobName ?? $"Invoice_{body.DocumentNumber}";
 
             this.log.Info(
-                $"[PrintInvoice] Fetching PDF for {body.DocumentType} {documentNumber}, showTerms={body.ShowTermsAndConditions}, showPrices={body.ShowPrices}");
+                $"[PrintInvoice] Fetching PDF for {body.DocumentType} {body.DocumentNumber}, showTerms={body.ShowTermsAndConditions}, showPrices={body.ShowPrices}");
 
             var data = await this.invoicePrintProxy.GetInvoiceAsPdf(
                 body.DocumentType,
-                documentNumber,
+                body.DocumentNumber,
                 body.ShowTermsAndConditions,
                 body.ShowPrices);
 
             if (data == null || data.Length == 0)
             {
                 throw new InvoicePrintMessageException(
-                    $"No PDF data returned for {body.DocumentType} {documentNumber}");
+                    $"No PDF data returned for {body.DocumentType} {body.DocumentNumber}");
             }
 
             this.log.Info($"[PrintInvoice] Received {data.Length} bytes, printing to {body.PrinterUri}");

@@ -1,7 +1,6 @@
-namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
+namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
-    using System.Text;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
@@ -16,44 +15,42 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 
     using NUnit.Framework;
 
-    public class WhenRsnNumberIsNotNumeric : ContextBase
+    public class WhenDocumentNumberIsZero : ContextBase
     {
         private Func<Task> action;
 
         [SetUp]
         public void SetUp()
         {
-            var bodyJson = JsonSerializer.Serialize(new PrintRsnDocumentMessageBody
-            {
-                RsnNumber = "not-a-number",
-                CopyType = "service",
-                FacilityCode = "FC001",
-                PrinterUri = "ipp://printer.local:631/ipp/print"
-            });
-
             var message = new Message
                               {
-                                  RoutingKey = "print.rsn.document",
-                                  Body = Encoding.UTF8.GetBytes(bodyJson)
+                                  RoutingKey = "print.invoice.document",
+                                  Body = JsonSerializer.SerializeToUtf8Bytes(new PrintInvoiceMessageBody
+                                             {
+                                                 DocumentNumber = 0,
+                                                 DocumentType = "I",
+                                                 PrinterUri = "ipp://printer.local:631/ipp/print"
+                                             })
                               };
 
             this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
         }
 
         [Test]
-        public async Task ShouldThrowRsnPrintMessageException()
+        public async Task ShouldThrowInvoicePrintMessageException()
         {
-            await this.action.Should().ThrowAsync<RsnPrintMessageException>()
-                .WithMessage("*not-a-number*");
+            await this.action.Should().ThrowAsync<InvoicePrintMessageException>()
+                .WithMessage("*Missing required field*");
         }
 
         [Test]
         public void ShouldNotCallProxy()
         {
-            this.RsnPrintProxy.DidNotReceive().GetRsnAsPdf(
-                Arg.Any<int>(),
+            this.InvoicePrintProxy.DidNotReceive().GetInvoiceAsPdf(
                 Arg.Any<string>(),
-                Arg.Any<string>());
+                Arg.Any<int>(),
+                Arg.Any<bool>(),
+                Arg.Any<bool>());
         }
 
         [Test]

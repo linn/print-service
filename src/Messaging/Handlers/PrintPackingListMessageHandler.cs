@@ -32,28 +32,22 @@ namespace Linn.PrintService.Messaging.Handlers
         {
             this.log.Info("[PrintPackingList] Received a message");
 
-            if (body.ConsignmentId is null || body.PrinterUri is null)
+            if (body.ConsignmentId == 0 || body.PrinterUri is null)
             {
                 throw new PackingListPrintMessageException(
                     "Missing required field in body: consignmentId or printerUri");
             }
 
-            if (!int.TryParse(body.ConsignmentId, out var consignmentNumber))
-            {
-                throw new PackingListPrintMessageException(
-                    $"Invalid consignmentId value: '{body.ConsignmentId}' is not a valid integer");
-            }
+            var jobName = body.JobName ?? $"PackingList_{body.ConsignmentId}";
 
-            var jobName = body.JobName ?? $"PackingList_{consignmentNumber}";
+            this.log.Info($"[PrintPackingList] Fetching PDF for consignment {body.ConsignmentId}");
 
-            this.log.Info($"[PrintPackingList] Fetching PDF for consignment {consignmentNumber}");
-
-            var data = await this.packingListProxy.GetPackingListAsPdf(consignmentNumber);
+            var data = await this.packingListProxy.GetPackingListAsPdf(body.ConsignmentId);
 
             if (data == null || data.Length == 0)
             {
                 throw new PackingListPrintMessageException(
-                    $"No PDF data returned for consignment {consignmentNumber}");
+                    $"No PDF data returned for consignment {body.ConsignmentId}");
             }
 
             this.log.Info($"[PrintPackingList] Received {data.Length} bytes, printing to {body.PrinterUri}");
