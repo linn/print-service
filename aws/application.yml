@@ -5,6 +5,18 @@ Parameters:
   dockerTag:
     Type: String
     Description: Docker tag to deploy
+  databaseHost:
+    Type: String
+    Description: Database host
+  databaseName:
+    Type: String
+    Description: Database name
+  databaseUserId:
+    Type: String
+    Description: Database user id
+  databasePassword:
+    Type: String
+    Description: Database password
   printUsername:
     Type: String
     Description: print username
@@ -131,6 +143,14 @@ Resources:
               awslogs-group: !Ref StackLogGroup
               awslogs-stream-prefix: !Ref AWS::StackName
           Environment:
+            - Name: DATABASE_HOST
+               Value: !Ref databaseHost
+            - Name: DATABASE_NAME
+              Value: !Ref databaseName
+            - Name: DATABASE_USER_ID
+              Value: !Ref databaseUserId
+            - Name: DATABASE_PASSWORD
+              Value: !Ref databasePassword
             - Name: PRINT_USERNAME
               Value: !Ref printUsername
             - Name: PRINT_PASSWORD

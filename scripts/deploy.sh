@@ -53,6 +53,10 @@ aws cloudformation deploy \
 --template-file ./aws/application.yml \
 --parameter-overrides \
 dockerTag=$BUILD_NUMBER \
+databaseHost=$DATABASE_HOST \ 
+databaseName=$DATABASE_NAME \
+databaseUserId=$DATABASE_USER_ID \
+databasePassword=$DATABASE_PASSWORD \
 printUsername=$PRINT_USERNAME \
 printPassword=$PRINT_PASSWORD \
 environmentSuffix=$ENV_SUFFIX \
