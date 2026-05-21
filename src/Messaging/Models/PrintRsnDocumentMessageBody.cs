@@ -8,7 +8,7 @@ namespace Linn.PrintService.Messaging.Models
 
         public string FacilityCode { get; set; }
 
-        public string PrinterUri { get; set; }
+        public string PrinterGroup { get; set; }
 
         public string? JobName { get; set; }
     }

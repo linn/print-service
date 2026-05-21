@@ -24,13 +24,24 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy.GetRsnAsPdf(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new byte[0]);
 
+            this.PrinterMappingRepository
+                .FindByAsync(Arg.Any<System.Linq.Expressions.Expression<System.Func<Linn.PrintService.Domain.LinnApps.PrinterMapping, bool>>>()
+                )
+                .Returns(new Linn.PrintService.Domain.LinnApps.PrinterMapping
+                    {
+                        PrinterGroup = "GROUP1",
+                        PrinterUri = "ipp://printer.local:631/ipp/print",
+                        PrinterType = "A4",
+                        DefaultForGroup = "Y"
+                    });
+
             this.action = () => this.Handler.HandleAsync(
                 new PrintRsnDocumentMessageBody
                     {
                         RsnNumber = 12345,
                         CopyType = "service",
                         FacilityCode = "FC001",
-                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                        PrinterGroup = "GROUP1"
                     },
                 new Dictionary<string, object>(),
                 CancellationToken.None);

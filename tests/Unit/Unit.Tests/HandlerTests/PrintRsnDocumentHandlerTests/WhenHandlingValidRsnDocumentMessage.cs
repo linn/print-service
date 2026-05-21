@@ -21,7 +21,9 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 
         private string facilityCode;
 
-        private string printerUri;
+        private string printerGroup;
+
+        private string resolvedPrinterUri;
 
         [SetUp]
         public async Task SetUp()
@@ -29,11 +31,23 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.rsnNumber = 12345;
             this.copyType = "original";
             this.facilityCode = "FC001";
-            this.printerUri = "ipp://printer.local:631/ipp/print";
+            this.printerGroup = "GROUP1";
+            this.resolvedPrinterUri = "ipp://printer.local:631/ipp/print";
             this.pdfData = new byte[] { 1, 2, 3, 4, 5 };
 
             this.RsnPrintProxy.GetRsnAsPdf(this.rsnNumber, this.copyType, this.facilityCode)
                 .Returns(this.pdfData);
+
+            this.PrinterMappingRepository
+                .FindByAsync(Arg.Any<System.Linq.Expressions.Expression<System.Func<Linn.PrintService.Domain.LinnApps.PrinterMapping, bool>>>()
+                )
+                .Returns(new Linn.PrintService.Domain.LinnApps.PrinterMapping
+                    {
+                        PrinterGroup = this.printerGroup,
+                        PrinterUri = this.resolvedPrinterUri,
+                        PrinterType = "A4",
+                        DefaultForGroup = "Y"
+                    });
 
             await this.Handler.HandleAsync(
                 new PrintRsnDocumentMessageBody
@@ -41,7 +55,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
                         RsnNumber = this.rsnNumber,
                         CopyType = this.copyType,
                         FacilityCode = this.facilityCode,
-                        PrinterUri = this.printerUri
+                        PrinterGroup = this.printerGroup
                     },
                 new Dictionary<string, object>(),
                 CancellationToken.None);
@@ -57,7 +71,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
         public void ShouldCallPrintService()
         {
             this.PrintingService.Received(1).Print(
-                this.printerUri,
+                this.resolvedPrinterUri,
                 $"RSN{this.rsnNumber}",
                 Arg.Is<byte[]>(b => b.SequenceEqual(this.pdfData)));
         }

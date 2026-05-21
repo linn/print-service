@@ -1,6 +1,7 @@
 namespace Linn.PrintService.Messaging.Host
 {
     using Linn.Common.Messaging.RabbitMQ;
+
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 

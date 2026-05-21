@@ -27,7 +27,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
                         RsnNumber = 0,
                         CopyType = "service",
                         FacilityCode = "FC001",
-                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                        PrinterGroup = "GROUP1"
                     },
                 new Dictionary<string, object>(),
                 CancellationToken.None);
