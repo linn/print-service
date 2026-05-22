@@ -25,7 +25,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
                 new PrintPackingListMessageBody
                     {
                         ConsignmentId = 0,
-                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                        PrinterGroup = "WAREHOUSE"
                     },
                 new Dictionary<string, object>(),
                 CancellationToken.None);

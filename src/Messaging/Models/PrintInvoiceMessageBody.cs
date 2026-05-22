@@ -6,7 +6,7 @@ namespace Linn.PrintService.Messaging.Models
 
         public string DocumentType { get; set; }
 
-        public string PrinterUri { get; set; }
+        public string PrinterGroup { get; set; }
 
         public bool ShowTermsAndConditions { get; set; }
 

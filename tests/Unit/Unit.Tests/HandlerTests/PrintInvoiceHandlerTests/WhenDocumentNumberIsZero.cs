@@ -26,7 +26,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
                     {
                         DocumentNumber = 0,
                         DocumentType = "I",
-                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                        PrinterGroup = "ACCOUNTS"
                     },
                 new Dictionary<string, object>(),
                 CancellationToken.None);

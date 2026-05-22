@@ -4,7 +4,7 @@ namespace Linn.PrintService.Messaging.Models
     {
         public int ConsignmentId { get; set; }
 
-        public string PrinterUri { get; set; }
+        public string PrinterGroup { get; set; }
 
         public string? JobName { get; set; }
     }

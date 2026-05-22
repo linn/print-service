@@ -39,8 +39,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
                 .Returns(this.pdfData);
 
             this.PrinterMappingRepository
-                .FindByAsync(Arg.Any<System.Linq.Expressions.Expression<System.Func<Linn.PrintService.Domain.LinnApps.PrinterMapping, bool>>>()
-                )
+                .FindByAsync(Arg.Any<System.Linq.Expressions.Expression<System.Func<Linn.PrintService.Domain.LinnApps.PrinterMapping, bool>>>())
                 .Returns(new Linn.PrintService.Domain.LinnApps.PrinterMapping
                     {
                         PrinterGroup = this.printerGroup,

@@ -1,6 +1,8 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
     using Linn.Common.Logging;
+    using Linn.Common.Persistence;
+    using Linn.PrintService.Domain.LinnApps;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Handlers;
     using Linn.PrintService.Printing;
@@ -17,6 +19,8 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 
         protected ILog Log { get; private set; }
 
+        protected IQueryRepository<PrinterMapping> PrinterMappingRepository { get; private set; }
+
         protected PrintPackingListMessageHandler Handler { get; private set; }
 
         [SetUp]
@@ -25,9 +29,12 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
             this.PackingListProxy = Substitute.For<IPackingListProxy>();
             this.PrintingService = Substitute.For<IIppPrintingService>();
             this.Log = Substitute.For<ILog>();
+            this.PrinterMappingRepository = Substitute.For<IQueryRepository<PrinterMapping>>();
+
             this.Handler = new PrintPackingListMessageHandler(
                 this.PackingListProxy,
                 this.PrintingService,
+                this.PrinterMappingRepository,
                 this.Log);
         }
     }

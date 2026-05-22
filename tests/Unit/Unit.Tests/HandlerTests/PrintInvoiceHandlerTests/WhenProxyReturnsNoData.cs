@@ -2,11 +2,13 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
+    using Linn.PrintService.Domain.LinnApps;
     using Linn.PrintService.Messaging.Exceptions;
     using Linn.PrintService.Messaging.Models;
 
@@ -28,6 +30,16 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
                     Arg.Any<bool>())
                 .Returns(new byte[0]);
 
+            this.PrinterMappingRepository
+                .FindByAsync(Arg.Any<Expression<Func<PrinterMapping, bool>>>())
+                .Returns(new PrinterMapping
+                    {
+                        PrinterGroup = "ACCOUNTS",
+                        PrinterUri = "ipp://printer.local:631/ipp/print",
+                        PrinterType = "A4",
+                        DefaultForGroup = "Y"
+                    });
+
             this.action = () => this.Handler.HandleAsync(
                 new PrintInvoiceMessageBody
                     {
@@ -35,7 +47,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
                         DocumentType = "I",
                         ShowTermsAndConditions = false,
                         ShowPrices = true,
-                        PrinterUri = "ipp://printer.local:631/ipp/print"
+                        PrinterGroup = "ACCOUNTS"
                     },
                 new Dictionary<string, object>(),
                 CancellationToken.None);
