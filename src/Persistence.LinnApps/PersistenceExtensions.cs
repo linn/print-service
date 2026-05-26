@@ -17,5 +17,12 @@ namespace Linn.PrintService.Persistence.LinnApps
                 .AddScoped<IQueryRepository<PrinterMapping>, EntityFrameworkQueryRepository<PrinterMapping>>(
                     r => new EntityFrameworkQueryRepository<PrinterMapping>(r.GetService<ServiceDbContext>()?.PrinterMappings));
         }
+
+        public static IServiceCollection AddMessagingPersistence(this IServiceCollection services)
+        {
+            return services.AddSingleton<ServiceDbContext>()
+                .AddSingleton<IQueryRepository<PrinterMapping>, EntityFrameworkQueryRepository<PrinterMapping>>(
+                    r => new EntityFrameworkQueryRepository<PrinterMapping>(r.GetService<ServiceDbContext>()?.PrinterMappings));
+        }
     }
 }

@@ -7,8 +7,8 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -21,20 +21,17 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintInvoiceHandlerTests
         [SetUp]
         public void SetUp()
         {
-            var message = new Message
-                              {
-                                  RoutingKey = "print.invoice.document",
-                                  Headers = new Dictionary<string, object>()
-                              };
-
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintInvoiceMessageBody(),
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]
         public async Task ShouldThrowInvoicePrintMessageException()
         {
             await this.action.Should().ThrowAsync<InvoicePrintMessageException>()
-                .WithMessage("*Missing required header*");
+                .WithMessage("*Missing required field*");
         }
 
         [Test]

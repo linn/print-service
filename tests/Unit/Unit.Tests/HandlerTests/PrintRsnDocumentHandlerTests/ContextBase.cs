@@ -1,6 +1,8 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using Linn.Common.Logging;
+    using Linn.Common.Persistence;
+    using Linn.PrintService.Domain.LinnApps;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Handlers;
     using Linn.PrintService.Printing;
@@ -17,6 +19,8 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 
         protected ILog Log { get; private set; }
 
+        protected IQueryRepository<PrinterMapping> PrinterMappingRepository { get; private set; }
+
         protected PrintRsnDocumentMessageHandler Handler { get; private set; }
 
         [SetUp]
@@ -25,9 +29,12 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy = Substitute.For<IRsnPrintProxy>();
             this.PrintingService = Substitute.For<IIppPrintingService>();
             this.Log = Substitute.For<ILog>();
+            this.PrinterMappingRepository = Substitute.For<IQueryRepository<PrinterMapping>>();
+
             this.Handler = new PrintRsnDocumentMessageHandler(
                 this.RsnPrintProxy,
                 this.PrintingService,
+                this.PrinterMappingRepository,
                 this.Log);
         }
     }

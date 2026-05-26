@@ -17,7 +17,8 @@ namespace Linn.PrintService.Facade.ResourceBuilders
                 PrinterName = model.PrinterName,
                 PrinterGroup = model.PrinterGroup,
                 PrinterUri = model.PrinterUri,
-                IsDefault = model.IsDefault
+                IsDefault = model.IsDefault,
+                PrinterType = model.PrinterType
             };
         }
 

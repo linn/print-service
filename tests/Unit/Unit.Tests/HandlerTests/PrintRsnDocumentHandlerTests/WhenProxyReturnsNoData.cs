@@ -2,14 +2,13 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
 
-    using Linn.Common.Messaging.RabbitMQ;
     using Linn.PrintService.Messaging.Exceptions;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -25,19 +24,26 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.RsnPrintProxy.GetRsnAsPdf(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new byte[0]);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.rsn.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "rsnNumber", Encoding.UTF8.GetBytes("12345") },
-                                                    { "copyType", Encoding.UTF8.GetBytes("original") },
-                                                    { "facilityCode", Encoding.UTF8.GetBytes("FC001") },
-                                                    { "printerUri", Encoding.UTF8.GetBytes("ipp://printer.local:631/ipp/print") }
-                                                }
-                              };
+            this.PrinterMappingRepository
+                .FindByAsync(Arg.Any<System.Linq.Expressions.Expression<System.Func<Linn.PrintService.Domain.LinnApps.PrinterMapping, bool>>>())
+                .Returns(new Linn.PrintService.Domain.LinnApps.PrinterMapping
+                    {
+                        PrinterGroup = "GROUP1",
+                        PrinterUri = "ipp://printer.local:631/ipp/print",
+                        PrinterType = "A4",
+                        DefaultForGroup = "Y"
+                    });
 
-            this.action = () => this.Handler.HandleAsync(message, CancellationToken.None);
+            this.action = () => this.Handler.HandleAsync(
+                new PrintRsnDocumentMessageBody
+                    {
+                        RsnNumber = 12345,
+                        CopyType = "service",
+                        FacilityCode = "FC001",
+                        PrinterGroup = "GROUP1"
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

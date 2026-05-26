@@ -10,6 +10,8 @@ namespace Linn.PrintService.Resources
 
         public string PrinterUri { get; set; }
 
+        public string PrinterType { get; set; }
+
         public bool IsDefault { get; set; }
     }
 }

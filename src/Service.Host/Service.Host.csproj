@@ -17,10 +17,10 @@
 		<None Remove="node_modules\**" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="Linn.Common.Authentication.Host" Version="4.0.0" />
 		<PackageReference Include="Linn.Common.Configuration" Version="3.0.0" />
 		<PackageReference Include="Linn.Common.Logging" Version="2.0.0" />
 		<PackageReference Include="Linn.Common.Rendering" Version="1.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\IoC\IoC.csproj" />

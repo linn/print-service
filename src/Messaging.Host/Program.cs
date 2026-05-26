@@ -1,12 +1,14 @@
 using Linn.Common.Messaging.RabbitMQ;
 using Linn.PrintService.IoC;
 using Linn.PrintService.Messaging.Host;
+using Linn.PrintService.Persistence.LinnApps;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddServices();
 builder.Services.AddLog();
 builder.Services.AddMessageHandlers();
+builder.Services.AddMessagingPersistence();
 
 builder.Services.AddSingleton<RabbitChannelConfiguration>(sp =>
     {

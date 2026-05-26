@@ -6,7 +6,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
     using System.Threading.Tasks;
 
     using Linn.Common.Logging;
-    using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -17,14 +17,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintJobHandlerTests
         [SetUp]
         public async Task SetUp()
         {
-            var message = new Message
-                              {
-                                  RoutingKey = "print.job",
-                                  Body = new byte[] { 1, 2, 3 },
-                                  Headers = new Dictionary<string, object>()
-                              };
-
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            await this.Handler.HandleAsync(
+                new PrintJobMessageBody(),
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]

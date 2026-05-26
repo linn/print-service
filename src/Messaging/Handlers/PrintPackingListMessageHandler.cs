@@ -2,63 +2,71 @@ namespace Linn.PrintService.Messaging.Handlers
 {
     using Linn.Common.Logging;
     using Linn.Common.Messaging.RabbitMQ;
+    using Linn.Common.Persistence;
+    using Linn.PrintService.Domain.LinnApps;
     using Linn.PrintService.Domain.LinnApps.Services;
     using Linn.PrintService.Messaging.Exceptions;
-    using Linn.PrintService.Messaging.Extensions;
+    using Linn.PrintService.Messaging.Models;
     using Linn.PrintService.Printing;
 
-    public class PrintPackingListMessageHandler : IMessageHandler
+    public class PrintPackingListMessageHandler : JsonMessageHandler<PrintPackingListMessageBody>
     {
         private readonly IPackingListProxy packingListProxy;
         private readonly IIppPrintingService printingService;
+        private readonly IQueryRepository<PrinterMapping> printerMappingRepository;
         private readonly ILog log;
 
         public PrintPackingListMessageHandler(
             IPackingListProxy packingListProxy,
             IIppPrintingService printingService,
+            IQueryRepository<PrinterMapping> printerMappingRepository,
             ILog log)
         {
             this.packingListProxy = packingListProxy;
             this.printingService = printingService;
+            this.printerMappingRepository = printerMappingRepository;
             this.log = log;
         }
 
-        public string RoutingKey { get; } = "print.packing-list.document";
+        public override string RoutingKey { get; } = "print.packing-list.document";
 
-        public async Task HandleAsync(Message message, CancellationToken cancellationToken)
+        public override async Task HandleAsync(
+            PrintPackingListMessageBody body,
+            IReadOnlyDictionary<string, object> headers,
+            CancellationToken cancellationToken)
         {
             this.log.Info("[PrintPackingList] Received a message");
 
-            if (!message.TryGetHeaderAsString("consignmentId", out var consignmentNumberValue)
-                || !message.TryGetHeaderAsString("printerUri", out var printerUri))
+            if (body.ConsignmentId == 0 || body.PrinterGroup is null)
             {
                 throw new PackingListPrintMessageException(
-                    "Missing required header: consignmentId or printerUri");
+                    "Missing required field in body: consignmentId or printerGroup");
             }
 
-            if (!int.TryParse(consignmentNumberValue, out var consignmentNumber))
+            var printer = await this.printerMappingRepository.FindByAsync(
+                p => p.PrinterGroup == body.PrinterGroup && p.DefaultForGroup == "Y" && p.PrinterType == "A4");
+
+            if (printer == null)
             {
                 throw new PackingListPrintMessageException(
-                    $"Invalid consignmentNumber header value: '{consignmentNumberValue}' is not a valid integer");
+                    $"No default A4 printer found for group '{body.PrinterGroup}'");
             }
 
-            var jobName = message.TryGetHeaderAsString("jobName", out var jobNameValue)
-                ? jobNameValue
-                : $"PackingList_{consignmentNumber}";
+            var jobName = body.JobName ?? $"PackingList_{body.ConsignmentId}";
 
-            this.log.Info($"[PrintPackingList] Fetching PDF for consignment {consignmentNumber}");
+            this.log.Info($"[PrintPackingList] Fetching PDF for consignment {body.ConsignmentId}");
 
-            var data = await this.packingListProxy.GetPackingListAsPdf(consignmentNumber);
+            var data = await this.packingListProxy.GetPackingListAsPdf(body.ConsignmentId);
 
             if (data == null || data.Length == 0)
             {
                 throw new PackingListPrintMessageException(
-                    $"No PDF data returned for consignment {consignmentNumber}");
+                    $"No PDF data returned for consignment {body.ConsignmentId}");
             }
 
-            this.log.Info($"[PrintPackingList] Received {data.Length} bytes, printing to {printerUri}");
+            this.log.Info($"[PrintPackingList] Received {data.Length} bytes, printing to {printer.PrinterUri}");
 
-            await this.printingService.Print(printerUri, jobName, data);
+            await this.printingService.Print(printer.PrinterUri, jobName, data);
 
             this.log.Info($"[PrintPackingList] Print job completed: {jobName}");
         }

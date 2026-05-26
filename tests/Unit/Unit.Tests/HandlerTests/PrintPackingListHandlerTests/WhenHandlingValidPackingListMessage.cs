@@ -1,12 +1,14 @@
 namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
+    using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Linn.Common.Messaging.RabbitMQ;
+    using Linn.PrintService.Domain.LinnApps;
+    using Linn.PrintService.Messaging.Models;
 
     using NSubstitute;
 
@@ -18,29 +20,39 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintPackingListHandlerTests
 
         private int consignmentNumber;
 
+        private string printerGroup;
+
         private string printerUri;
 
         [SetUp]
         public async Task SetUp()
         {
             this.consignmentNumber = 67890;
+            this.printerGroup = "WAREHOUSE";
             this.printerUri = "ipp://printer.local:631/ipp/print";
             this.pdfData = new byte[] { 1, 2, 3, 4, 5 };
 
             this.PackingListProxy.GetPackingListAsPdf(this.consignmentNumber)
                 .Returns(this.pdfData);
 
-            var message = new Message
-                              {
-                                  RoutingKey = "print.packing-list.document",
-                                  Headers = new Dictionary<string, object>
-                                                {
-                                                    { "consignmentId", Encoding.UTF8.GetBytes(this.consignmentNumber.ToString()) },
-                                                    { "printerUri", Encoding.UTF8.GetBytes(this.printerUri) }
-                                                }
-                              };
+            this.PrinterMappingRepository
+                .FindByAsync(Arg.Any<Expression<Func<PrinterMapping, bool>>>())
+                .Returns(new PrinterMapping
+                    {
+                        PrinterGroup = this.printerGroup,
+                        PrinterUri = this.printerUri,
+                        PrinterType = "A4",
+                        DefaultForGroup = "Y"
+                    });
 
-            await this.Handler.HandleAsync(message, CancellationToken.None);
+            await this.Handler.HandleAsync(
+                new PrintPackingListMessageBody
+                    {
+                        ConsignmentId = this.consignmentNumber,
+                        PrinterGroup = this.printerGroup
+                    },
+                new Dictionary<string, object>(),
+                CancellationToken.None);
         }
 
         [Test]
