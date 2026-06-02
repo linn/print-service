@@ -8,16 +8,16 @@ namespace Linn.PrintService.Messaging.Host
     public class Worker : BackgroundService
     {
         private readonly RabbitChannelConfiguration config;
-        private readonly IEnumerable<IMessageHandler> handlers;
+        private readonly IServiceProvider serviceProvider;
         private readonly ILogger<Worker> logger;
 
         public Worker(
             RabbitChannelConfiguration config,
-            IEnumerable<IMessageHandler> handlers,
+            IServiceProvider serviceProvider,
             ILogger<Worker> logger)
         {
             this.config = config;
-            this.handlers = handlers;
+            this.serviceProvider = serviceProvider;
             this.logger = logger;
         }
 
@@ -32,7 +32,7 @@ namespace Linn.PrintService.Messaging.Host
             }
 
             var channel = this.config.ConsumerChannel;
-            var router = new RabbitMessageRouter(channel, this.handlers);
+            var router = new RabbitMessageRouter(channel, this.serviceProvider);
             var consumer = router.CreateConsumer(stoppingToken);
 
             this.logger.LogInformation("[Worker] Subscribing to queue...");

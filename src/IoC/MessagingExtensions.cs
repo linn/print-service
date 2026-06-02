@@ -9,10 +9,10 @@ namespace Linn.PrintService.IoC
     {
         public static IServiceCollection AddMessageHandlers(this IServiceCollection services)
         {
-            services.AddSingleton<IMessageHandler, PrintJobMessageHandler>();
-            services.AddSingleton<IMessageHandler, PrintRsnDocumentMessageHandler>();
-            services.AddSingleton<IMessageHandler, PrintPackingListMessageHandler>();
-            services.AddSingleton<IMessageHandler, PrintInvoiceMessageHandler>();
+            services.AddScoped<IMessageHandler, PrintJobMessageHandler>();
+            services.AddScoped<IMessageHandler, PrintRsnDocumentMessageHandler>();
+            services.AddScoped<IMessageHandler, PrintPackingListMessageHandler>();
+            services.AddScoped<IMessageHandler, PrintInvoiceMessageHandler>();
 
             return services;
         }
