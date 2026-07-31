@@ -106,13 +106,14 @@ namespace Linn.PrintService.Printing
 
                 ms.Write(attrs, 0, attrs.Length);
 
-                // job-template-attributes-tag — force A4 media
+                this.log.Info("Adding job-template-attributes: forcing media=iso_a4_210x297mm");
                 ms.WriteByte(0x02);
 
                 var jobAttrs = Array.Empty<byte>();
                 jobAttrs = this.AddAttr(jobAttrs, 0x44, "media", "iso_a4_210x297mm");
 
                 ms.Write(jobAttrs, 0, jobAttrs.Length);
+                this.log.Info("A4 media attribute added to job-template-attributes group");
 
                 // end-of-attributes-tag
                 ms.WriteByte(0x03);
