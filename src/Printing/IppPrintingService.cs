@@ -102,7 +102,7 @@ namespace Linn.PrintService.Printing
                 attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
                 attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
                 attrs = this.AddAttr(attrs, 0x42, "job-name", jobName);
-                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/octet-stream");
+                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/pdf");
 
                 ms.Write(attrs, 0, attrs.Length);
 
