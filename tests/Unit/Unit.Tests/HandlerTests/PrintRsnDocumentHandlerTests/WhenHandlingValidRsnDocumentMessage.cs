@@ -72,7 +72,8 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
             this.PrintingService.Received(1).Print(
                 this.resolvedPrinterUri,
                 $"RSN{this.rsnNumber}",
-                Arg.Is<byte[]>(b => b.SequenceEqual(this.pdfData)));
+                Arg.Is<byte[]>(b => b.SequenceEqual(this.pdfData)),
+                true);
         }
     }
 }

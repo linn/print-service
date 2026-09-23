@@ -66,7 +66,7 @@ namespace Linn.PrintService.Messaging.Handlers
 
             this.log.Info($"[PrintRsnDocument] Received {data.Length} bytes, printing to {printer.PrinterUri}");
 
-            await this.printingService.Print(printer.PrinterUri, jobName, data);
+            await this.printingService.Print(printer.PrinterUri, jobName, data, duplex: true);
 
             this.log.Info($"[PrintRsnDocument] Print job completed: {jobName}");
         }

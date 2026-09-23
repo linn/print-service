@@ -16,9 +16,9 @@ namespace Linn.PrintService.Printing
             this.httpClient = httpClient;
         }
 
-        public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data)
+        public async Task<PrintResult> Print(string printerUri, string jobName, byte[] data, bool duplex = false)
         {
-            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data.Length}");
+            this.log.Info($"Print requested: printerUri={printerUri}, jobName={jobName}, dataLength={data.Length}, duplex={duplex}");
 
             if (string.IsNullOrWhiteSpace(printerUri))
             {
@@ -37,7 +37,7 @@ namespace Linn.PrintService.Printing
 
             try
             {
-                var ippPayload = this.BuildPayload(printerUri, jobName, data);
+                var ippPayload = this.BuildPayload(printerUri, jobName, data, duplex);
                 var result = await this.SendIppRequest(printerUri, ippPayload);
 
                 this.log.Info($"Print completed: printerUri={printerUri}, "
@@ -82,9 +82,9 @@ namespace Linn.PrintService.Printing
             }
         }
 
-        private byte[] BuildPayload(string printerUri, string jobName, byte[] documentBytes)
+        private byte[] BuildPayload(string printerUri, string jobName, byte[] documentBytes, bool duplex = false)
         {
-            this.log.Info($"Building IPP payload for printerUri={printerUri}, jobName={jobName}, documentBytesLength={documentBytes?.Length ?? 0}");
+            this.log.Info($"Building IPP payload for printerUri={printerUri}, jobName={jobName}, documentBytesLength={documentBytes?.Length ?? 0}, duplex={duplex}");
             using (var ms = new MemoryStream())
             {
                 // IPP header
@@ -111,6 +111,12 @@ namespace Linn.PrintService.Printing
 
                 var jobAttrs = Array.Empty<byte>();
                 jobAttrs = this.AddAttr(jobAttrs, 0x44, "media", "iso_a4_210x297mm");
+
+                if (duplex)
+                {
+                    jobAttrs = this.AddAttr(jobAttrs, 0x44, "sides", "two-sided-long-edge");
+                    this.log.Info("Duplex requested: sides=two-sided-long-edge added to job-template-attributes group");
+                }
 
                 ms.Write(jobAttrs, 0, jobAttrs.Length);
                 this.log.Info("A4 media attribute added to job-template-attributes group");
