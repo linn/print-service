@@ -102,7 +102,7 @@ namespace Linn.PrintService.Printing
                 attrs = this.AddAttr(attrs, 0x48, "attributes-natural-language", "en");
                 attrs = this.AddAttr(attrs, 0x45, "printer-uri", printerUri);
                 attrs = this.AddAttr(attrs, 0x42, "job-name", jobName);
-                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/pdf");
+                attrs = this.AddAttr(attrs, 0x49, "document-format", "application/octet-stream");
 
                 ms.Write(attrs, 0, attrs.Length);
 
@@ -125,8 +125,38 @@ namespace Linn.PrintService.Printing
                 ms.WriteByte(0x03);
 
                 // document bytes
-                ms.Write(documentBytes, 0, documentBytes.Length);
+                var payloadBytes = duplex ? this.WrapWithPjlDuplex(documentBytes, jobName) : documentBytes;
+                ms.Write(payloadBytes, 0, payloadBytes.Length);
                 this.log.Info("IPP payload built successfully.");
+
+                return ms.ToArray();
+            }
+        }
+
+        private byte[] WrapWithPjlDuplex(byte[] documentBytes, string jobName)
+        {
+            this.log.Info("Wrapping document bytes with PJL duplex preamble/postamble (SET DUPLEX=ON, BINDING=LONGEDGE)");
+
+            const string Esc = "\u001B%-12345X";
+            var preamble = Encoding.ASCII.GetBytes(
+                Esc
+                + $"@PJL JOB NAME=\"{jobName}\"\r\n"
+                + "@PJL SET DUPLEX=ON\r\n"
+                + "@PJL SET BINDING=LONGEDGE\r\n"
+                + "@PJL ENTER LANGUAGE=AUTO\r\n");
+
+            var postamble = Encoding.ASCII.GetBytes(
+                Esc
+                + "@PJL EOJ\r\n"
+                + Esc);
+
+            using (var ms = new MemoryStream())
+            {
+                ms.Write(preamble, 0, preamble.Length);
+                ms.Write(documentBytes, 0, documentBytes.Length);
+                ms.Write(postamble, 0, postamble.Length);
+
+                this.log.Info($"PJL wrapping complete: originalLength={documentBytes.Length}, wrappedLength={ms.Length}");
 
                 return ms.ToArray();
             }
@@ -211,10 +241,25 @@ namespace Linn.PrintService.Printing
 
                     var respBytes = await response.Content.ReadAsByteArrayAsync();
 
+                    var ippStatusCode = respBytes.Length >= 4
+                        ? (respBytes[2] << 8) | respBytes[3]
+                        : -1;
+
+                    // IPP status-codes below 0x0100 (0x0000-0x00FF) indicate success (e.g. successful-ok, successful-ok-ignored-or-substituted-attributes).
+                    var ippSuccess = ippStatusCode >= 0x0000 && ippStatusCode <= 0x00FF;
+
+                    if (!ippSuccess)
+                    {
+                        this.log.Error(
+                            $"IPP request rejected by printer: ippStatusCode=0x{ippStatusCode:x4}, uri={uri}",
+                            null);
+                    }
+
                     return new PrintResult
                     {
-                        Success = response.IsSuccessStatusCode,
+                        Success = response.IsSuccessStatusCode && ippSuccess,
                         HttpStatus = (int)response.StatusCode,
+                        IppStatusCode = ippStatusCode,
                         ResponsePreview = this.HexPreview(respBytes, 256)
                     };
                 }

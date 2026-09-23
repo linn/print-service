@@ -66,7 +66,13 @@ namespace Linn.PrintService.Messaging.Handlers
 
             this.log.Info($"[PrintRsnDocument] Received {data.Length} bytes, printing to {printer.PrinterUri}");
 
-            await this.printingService.Print(printer.PrinterUri, jobName, data, duplex: true);
+            var result = await this.printingService.Print(printer.PrinterUri, jobName, data, duplex: true);
+
+            if (!result.Success)
+            {
+                throw new RsnPrintMessageException(
+                    $"Print job '{jobName}' failed: httpStatus={result.HttpStatus}, ippStatusCode=0x{result.IppStatusCode:x4}");
+            }
 
             this.log.Info($"[PrintRsnDocument] Print job completed: {jobName}");
         }

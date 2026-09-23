@@ -6,6 +6,7 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
     using System.Threading.Tasks;
 
     using Linn.PrintService.Messaging.Models;
+    using Linn.PrintService.Printing;
 
     using NSubstitute;
 
@@ -37,6 +38,10 @@ namespace Linn.PrintService.Unit.Tests.HandlerTests.PrintRsnDocumentHandlerTests
 
             this.RsnPrintProxy.GetRsnAsPdf(this.rsnNumber, this.copyType, this.facilityCode)
                 .Returns(this.pdfData);
+
+            this.PrintingService
+                .Print(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<byte[]>(), Arg.Any<bool>())
+                .Returns(new PrintResult { Success = true, HttpStatus = 200 });
 
             this.PrinterMappingRepository
                 .FindByAsync(Arg.Any<System.Linq.Expressions.Expression<System.Func<Linn.PrintService.Domain.LinnApps.PrinterMapping, bool>>>())

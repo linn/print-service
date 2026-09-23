@@ -8,6 +8,8 @@ namespace Linn.PrintService.Printing
 
         public string ResponsePreview { get; set; }
 
+        public int IppStatusCode { get; set; }
+
         public string? State { get; set; }
     }
 }
